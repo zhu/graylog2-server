@@ -3,6 +3,7 @@ import React from 'react';
 import { Row, Col, Label, OverlayTrigger, Tooltip } from 'components/graylog';
 import lodash from 'lodash';
 
+import OnLoadTransition from 'components/onloadtransition/OnLoadTransition';
 import SupportLink from 'components/support/SupportLink';
 
 const LIFECYCLE_DEFAULT_MESSAGES = {
@@ -66,7 +67,7 @@ class PageHeader extends React.Component {
 
     const topLevelClassNames = this.props.subpage ? 'content-head' : 'content content-head';
     return (
-      <div>
+      <OnLoadTransition>
         <Row className={topLevelClassNames}>
           <Col sm={12}>
             {children[2]
@@ -107,7 +108,7 @@ class PageHeader extends React.Component {
             )
           }
         </Row>
-      </div>
+      </OnLoadTransition>
     );
   }
 }
