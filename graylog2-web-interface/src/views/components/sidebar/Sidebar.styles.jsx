@@ -1,9 +1,10 @@
 import * as React from 'react';
 import styled from 'styled-components';
 
+import OnLoadTransition from 'components/onloadtransition/OnLoadTransition';
 import { Title as NavItemTitle } from './NavItem.styles';
 
-export const Container: React.ComponentType<{ open: boolean }> = styled.div`
+export const Container: React.ComponentType<{ open: boolean }> = styled(OnLoadTransition)`
   grid-area: sidebar;
   z-index: 3;
   background: #393939;
