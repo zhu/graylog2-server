@@ -6,6 +6,7 @@ import StoreProvider from 'injection/StoreProvider';
 
 import { Alert, Row, Col } from 'components/graylog';
 import { Icon, Spinner } from 'components/common';
+import OnLoadTransition from 'components/onloadtransition/OnLoadTransition';
 import Notification from 'components/notifications/Notification';
 
 const NotificationsStore = StoreProvider.getStore('Notifications');
@@ -51,17 +52,19 @@ const NotificationsList = createReactClass({
     }
 
     return (
-      <Row className="content">
-        <Col md={12}>
-          <h2>{title}</h2>
-          <p className="description">
-            Notifications are triggered by Graylog and indicate a situation you should act upon. Many notification
-            types will also provide a link to the Graylog documentation if you need more information or assistance.
-          </p>
+      <OnLoadTransition>
+        <Row className="content">
+          <Col md={12}>
+            <h2>{title}</h2>
+            <p className="description">
+              Notifications are triggered by Graylog and indicate a situation you should act upon. Many notification
+              types will also provide a link to the Graylog documentation if you need more information or assistance.
+            </p>
 
-          {content}
-        </Col>
-      </Row>
+            {content}
+          </Col>
+        </Row>
+      </OnLoadTransition>
     );
   },
 });
