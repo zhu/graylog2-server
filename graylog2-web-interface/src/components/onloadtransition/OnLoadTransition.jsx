@@ -25,21 +25,24 @@ type Props = {
   duration?: number,
   delay?: number,
   children: React.Node,
+  className: string
 }
 
-const OnLoadTransition = ({ children, duration, delay }: Props) => {
-  return (<Transition duration={duration} delay={delay}>{children}</Transition>);
+const OnLoadTransition = ({ children, duration, delay, className, ...rest }: Props) => {
+  return (<Transition duration={duration} delay={delay} className={className} {...rest}>{children}</Transition>);
 };
 
 OnLoadTransition.propTypes = {
   delay: PropTypes.number,
   duration: PropTypes.number,
   children: PropTypes.node.isRequired,
+  className: PropTypes.string,
 };
 
 OnLoadTransition.defaultProps = {
   delay: 0,
-  duration: 300,
+  duration: 500,
+  className: '',
 };
 
 export default OnLoadTransition;
