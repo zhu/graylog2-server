@@ -6,6 +6,7 @@ import { ButtonToolbar, Col, Row, Button } from 'components/graylog';
 import { DocumentTitle, IfPermitted, PageHeader } from 'components/common';
 import DocumentationLink from 'components/support/DocumentationLink';
 import EventsContainer from 'components/events/events/EventsContainer';
+import OnLoadTransition from 'components/onloadtransition/OnLoadTransition';
 
 import DocsHelper from 'util/DocsHelper';
 import Routes from 'routing/Routes';
@@ -45,11 +46,13 @@ const EventsPage = ({ location }) => {
           </ButtonToolbar>
         </PageHeader>
 
-        <Row className="content">
-          <Col md={12}>
-            <EventsContainer key={filteredSourceStream} streamId={filteredSourceStream} />
-          </Col>
-        </Row>
+        <OnLoadTransition>
+          <Row className="content">
+            <Col md={12}>
+              <EventsContainer key={filteredSourceStream} streamId={filteredSourceStream} />
+            </Col>
+          </Row>
+        </OnLoadTransition>
       </span>
     </DocumentTitle>
   );
