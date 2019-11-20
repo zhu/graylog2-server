@@ -12,6 +12,8 @@ import { Input } from 'components/bootstrap';
 import { DatePicker, Select, Icon } from 'components/common';
 import { RefreshControls, QueryInput } from 'components/search';
 import DocumentationLink from 'components/support/DocumentationLink';
+import OnLoadTransition from 'components/onloadtransition/OnLoadTransition';
+
 import DocsHelper from 'util/DocsHelper';
 
 import StoreProvider from 'injection/StoreProvider';
@@ -415,7 +417,7 @@ const SearchBar = createReactClass({
 
   render() {
     return (
-      <div className="row no-bm">
+      <OnLoadTransition className="row no-bm">
         <div className="col-md-12" id="universalsearch-container">
           <div className="row no-bm">
             <div ref={(universalSearch) => { this.universalSearch = universalSearch; }} className="col-md-12" id="universalsearch">
@@ -498,7 +500,7 @@ const SearchBar = createReactClass({
             </div>
           </div>
         </div>
-      </div>
+      </OnLoadTransition>
     );
   },
 });
