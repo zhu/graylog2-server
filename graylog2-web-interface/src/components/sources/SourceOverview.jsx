@@ -8,6 +8,7 @@ import moment from 'moment';
 
 import SupportLink from 'components/support/SupportLink';
 import { Spinner } from 'components/common';
+import OnLoadTransition from 'components/onloadtransition/OnLoadTransition';
 
 import DateTime from 'logic/datetimes/DateTime';
 import UniversalSearch from 'logic/search/UniversalSearch';
@@ -358,7 +359,7 @@ const SourceOverview = createReactClass({
     );
 
     return (
-      <div>
+      <OnLoadTransition>
         <div className="row content">
           <div className="col-md-12">
             <div>
@@ -392,7 +393,7 @@ const SourceOverview = createReactClass({
         {this.state.renderResultTable ? null : emptySources}
         {results}
 
-      </div>
+      </OnLoadTransition>
     );
   },
 });
