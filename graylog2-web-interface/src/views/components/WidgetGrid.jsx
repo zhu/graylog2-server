@@ -14,6 +14,7 @@ import { widgetDefinition } from 'views/logic/Widgets';
 import { TitlesStore, TitleTypes } from 'views/stores/TitlesStore';
 import WidgetPosition from 'views/logic/widgets/WidgetPosition';
 import WidgetContext from 'views/components/contexts/WidgetContext';
+import OnLoadTransition from 'components/onloadtransition/OnLoadTransition';
 import Widget from './widgets/Widget';
 import { PositionsMap, WidgetDataMap, WidgetErrorsMap, WidgetsMap } from './widgets/WidgetPropTypes';
 
@@ -90,7 +91,7 @@ class WidgetGrid extends React.Component {
       const widgetTitle = titles.getIn([TitleTypes.Widget, widget.id], WidgetGrid._defaultTitle(widget));
 
       returnedWidgets.widgets.push(
-        <div key={widget.id} className={style.widgetContainer}>
+        <OnLoadTransition key={widget.id} className={style.widgetContainer}>
           <WidgetContext.Provider value={widget}>
             <AdditionalContext.Provider value={{ widget }}>
               <Widget key={widgetId}
@@ -108,7 +109,7 @@ class WidgetGrid extends React.Component {
                       title={widgetTitle} />
             </AdditionalContext.Provider>
           </WidgetContext.Provider>
-        </div>,
+        </OnLoadTransition>,
       );
     });
 
