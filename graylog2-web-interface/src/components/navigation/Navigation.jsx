@@ -19,6 +19,7 @@ import { PluginStore } from 'graylog-web-plugin/plugin';
 import GlobalThroughput from 'components/throughput/GlobalThroughput';
 import UserMenu from 'components/navigation/UserMenu';
 import HelpMenu from 'components/navigation/HelpMenu';
+import OnLoadTransition from 'components/onloadtransition/OnLoadTransition';
 import { IfPermitted } from 'components/common';
 
 import NavigationBrand from './NavigationBrand';
@@ -68,78 +69,80 @@ const Navigation = ({ permissions, fullName, location, loginName }) => {
     .map(pluginRoute => formatPluginRoute(pluginRoute, permissions, location));
 
   return (
-    <Navbar inverse fluid fixedTop>
-      <Navbar.Header>
-        <Navbar.Brand>
-          <LinkContainer to={Routes.STARTPAGE}>
-            <NavigationBrand />
-          </LinkContainer>
-        </Navbar.Brand>
-        <Navbar.Toggle />
-
-        {
-        AppConfig.gl2DevMode()
-          && <Badge bsStyle="danger" className="dev-badge">DEV</Badge>
-        }
-      </Navbar.Header>
-      <Navbar.Collapse>
-        <Nav navbar>
-          <IfPermitted permissions={['searches:absolute', 'searches:relative', 'searches:keyword']}>
-            <LinkContainer to={Routes.SEARCH}>
-              <NavItem to="search">Search</NavItem>
+    <OnLoadTransition>
+      <Navbar inverse fluid fixedTop>
+        <Navbar.Header>
+          <Navbar.Brand>
+            <LinkContainer to={Routes.STARTPAGE}>
+              <NavigationBrand />
             </LinkContainer>
-          </IfPermitted>
+          </Navbar.Brand>
+          <Navbar.Toggle />
 
-          {!enableNewSearch && (
-          <NavDropdown title="Views" id="views-dropdown">
-            <NavigationLink path={Routes.EXTENDEDSEARCH} description="Create new" />
-            <NavigationLink path={Routes.VIEWS.LIST} description="Load existing" />
-          </NavDropdown>
-          )}
-
-          <LinkContainer to={Routes.STREAMS}>
-            <NavItem>Streams</NavItem>
-          </LinkContainer>
-
-          <LinkContainer to={Routes.ALERTS.LIST}>
-            <NavItem>Alerts</NavItem>
-          </LinkContainer>
-
-          <LinkContainer to={Routes.DASHBOARDS}>
-            <NavItem>Dashboards</NavItem>
-          </LinkContainer>
-
-          <IfPermitted permissions="sources:read">
-            <LinkContainer to={Routes.SOURCES}>
-              <NavItem>Sources</NavItem>
-            </LinkContainer>
-          </IfPermitted>
-
-          {pluginNavigations}
-
-          <SystemMenu />
-        </Nav>
-
-        <NotificationBadge />
-
-        <Nav navbar pullRight className={styles['header-meta-nav']}>
           {
           AppConfig.gl2DevMode()
-            && (
-              <InactiveNavItem className={styles['dev-badge-wrap']}>
-                <Badge bsStyle="danger" className="dev-badge">DEV</Badge>
-              </InactiveNavItem>
-            )
+            && <Badge bsStyle="danger" className="dev-badge">DEV</Badge>
           }
+        </Navbar.Header>
+        <Navbar.Collapse>
+          <Nav navbar>
+            <IfPermitted permissions={['searches:absolute', 'searches:relative', 'searches:keyword']}>
+              <LinkContainer to={Routes.SEARCH}>
+                <NavItem to="search">Search</NavItem>
+              </LinkContainer>
+            </IfPermitted>
 
-          <LinkContainer to={Routes.SYSTEM.NODES.LIST}>
-            <GlobalThroughput />
-          </LinkContainer>
-          <HelpMenu active={_isActive(location.pathname, Routes.GETTING_STARTED)} />
-          <UserMenu fullName={fullName} loginName={loginName} />
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+            {!enableNewSearch && (
+            <NavDropdown title="Views" id="views-dropdown">
+              <NavigationLink path={Routes.EXTENDEDSEARCH} description="Create new" />
+              <NavigationLink path={Routes.VIEWS.LIST} description="Load existing" />
+            </NavDropdown>
+            )}
+
+            <LinkContainer to={Routes.STREAMS}>
+              <NavItem>Streams</NavItem>
+            </LinkContainer>
+
+            <LinkContainer to={Routes.ALERTS.LIST}>
+              <NavItem>Alerts</NavItem>
+            </LinkContainer>
+
+            <LinkContainer to={Routes.DASHBOARDS}>
+              <NavItem>Dashboards</NavItem>
+            </LinkContainer>
+
+            <IfPermitted permissions="sources:read">
+              <LinkContainer to={Routes.SOURCES}>
+                <NavItem>Sources</NavItem>
+              </LinkContainer>
+            </IfPermitted>
+
+            {pluginNavigations}
+
+            <SystemMenu />
+          </Nav>
+
+          <NotificationBadge />
+
+          <Nav navbar pullRight className={styles['header-meta-nav']}>
+            {
+            AppConfig.gl2DevMode()
+              && (
+                <InactiveNavItem className={styles['dev-badge-wrap']}>
+                  <Badge bsStyle="danger" className="dev-badge">DEV</Badge>
+                </InactiveNavItem>
+              )
+            }
+
+            <LinkContainer to={Routes.SYSTEM.NODES.LIST}>
+              <GlobalThroughput />
+            </LinkContainer>
+            <HelpMenu active={_isActive(location.pathname, Routes.GETTING_STARTED)} />
+            <UserMenu fullName={fullName} loginName={loginName} />
+          </Nav>
+        </Navbar.Collapse>
+      </Navbar>
+    </OnLoadTransition>
   );
 };
 
