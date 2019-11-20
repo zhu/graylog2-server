@@ -1,7 +1,6 @@
 import React from 'react';
 import createReactClass from 'create-react-class';
 import Reflux from 'reflux';
-import { Row, Col } from 'components/graylog';
 
 import CreateStreamButton from 'components/streams/CreateStreamButton';
 import StreamComponent from 'components/streams/StreamComponent';
@@ -71,13 +70,10 @@ const StreamsPage = createReactClass({
             </IfPermitted>
           </PageHeader>
 
-          <Row className="content">
-            <Col md={12}>
-              <StreamComponent currentUser={this.state.currentUser}
-                               onStreamSave={this._onSave}
-                               indexSets={this.state.indexSets} />
-            </Col>
-          </Row>
+          <StreamComponent currentUser={this.state.currentUser}
+                           onStreamSave={this._onSave}
+                           indexSets={this.state.indexSets} />
+
         </div>
       </DocumentTitle>
     );

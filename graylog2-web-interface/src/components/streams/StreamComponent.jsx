@@ -7,6 +7,7 @@ import { IfPermitted, TypeAheadDataFilter, Icon } from 'components/common';
 import StoreProvider from 'injection/StoreProvider';
 
 import Spinner from 'components/common/Spinner';
+import OnLoadTransition from 'components/onloadtransition/OnLoadTransition';
 import StreamList from './StreamList';
 
 import CreateStreamButton from './CreateStreamButton';
@@ -104,25 +105,29 @@ class StreamComponent extends React.Component {
     ) : <Spinner />;
 
     return (
-      <div>
-        <Row className="row-sm">
-          <Col md={8}>
-            <TypeAheadDataFilter id="stream-data-filter"
-                                 ref={(streamFilter) => { this.streamFilter = streamFilter; }}
-                                 label="Filter streams"
-                                 data={this.state.streams}
-                                 displayKey="title"
-                                 filterSuggestions={[]}
-                                 searchInKeys={['title', 'description']}
-                                 onDataFiltered={this._updateFilteredStreams} />
-          </Col>
-        </Row>
-        <Row>
+      <OnLoadTransition>
+        <Row className="content">
           <Col md={12}>
-            {streamsList}
+            <Row className="row-sm">
+              <Col md={8}>
+                <TypeAheadDataFilter id="stream-data-filter"
+                                     ref={(streamFilter) => { this.streamFilter = streamFilter; }}
+                                     label="Filter streams"
+                                     data={this.state.streams}
+                                     displayKey="title"
+                                     filterSuggestions={[]}
+                                     searchInKeys={['title', 'description']}
+                                     onDataFiltered={this._updateFilteredStreams} />
+              </Col>
+            </Row>
+            <Row>
+              <Col md={12}>
+                {streamsList}
+              </Col>
+            </Row>
           </Col>
         </Row>
-      </div>
+      </OnLoadTransition>
     );
   }
 }
