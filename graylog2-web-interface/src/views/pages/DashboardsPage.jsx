@@ -9,6 +9,7 @@ import { DocumentTitle, PageHeader } from 'components/common/index';
 import Routes from 'routing/Routes';
 
 import DocumentationLink from 'components/support/DocumentationLink';
+import OnLoadTransition from 'components/onloadtransition/OnLoadTransition';
 import DocsHelper from 'util/DocsHelper';
 import { DashboardsActions, DashboardsStore } from 'views/stores/DashboardsStore';
 import type { DashboardsStoreState } from 'views/stores/DashboardsStore';
@@ -57,14 +58,16 @@ const DashboardsPage = ({ dashboards: { list, pagination } }: Props) => {
           </span>
         </PageHeader>
 
-        <Row className="content">
-          <Col md={12}>
-            <ViewList views={list}
-                      pagination={pagination}
-                      handleSearch={handleSearch}
-                      handleViewDelete={handleViewDelete} />
-          </Col>
-        </Row>
+        <OnLoadTransition>
+          <Row className="content">
+            <Col md={12}>
+              <ViewList views={list}
+                        pagination={pagination}
+                        handleSearch={handleSearch}
+                        handleViewDelete={handleViewDelete} />
+            </Col>
+          </Row>
+        </OnLoadTransition>
       </span>
     </DocumentTitle>
   );
