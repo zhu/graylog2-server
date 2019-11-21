@@ -41,7 +41,7 @@ OnLoadTransition.propTypes = {
 
 OnLoadTransition.defaultProps = {
   delay: 0,
-  duration: 500,
+  duration: 300,
   className: '',
 };
 
