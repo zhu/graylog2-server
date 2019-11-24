@@ -1,47 +1,54 @@
-import React from 'react';
+// @flow
+import React, { useState, useEffect } from 'react';
+import type { ComponentType } from 'react';
 import PropTypes from 'prop-types';
+import styled from 'styled-components';
 
 import Icon from './Icon';
+
+const Wrapper: ComponentType<{ visible: boolean }> = styled.span`
+  visibility: ${({ visible }) => (visible ? 'visible' : 'hidden')};
+`;
+
+type Props = {
+  delay?: number,
+  name?: string,
+  text?: string,
+}
 
 /**
  * Simple spinner to use while waiting for something to load.
  */
-class Spinner extends React.Component {
-  static propTypes = {
-    /** Name of the Icon to use. */
-    name: PropTypes.string,
-    /** Text to show while loading. */
-    text: PropTypes.string,
-  };
+const Spinner = ({ name, text, delay, ...rest }: Props) => {
+  const [delayFinished, setDelayFinished] = useState(false);
 
-  static defaultProps = {
-    name: 'spinner',
-    text: 'Loading...',
-  };
+  useEffect(() => {
+    const delayTimeout = window.setTimeout(() => {
+      setDelayFinished(true);
+    }, delay);
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      delayFinished: false,
+    return () => {
+      clearTimeout(delayTimeout);
     };
-  }
+  }, []);
 
-  componentDidMount(): void {
-    this.delayTimeout = window.setTimeout((): void => {
-      this.setState({
-        delayFinished: true,
-      });
-    }, 200);
-  }
+  return <Wrapper visible={delayFinished}><Icon name={name} spin {...rest} /> {text}</Wrapper>;
+};
 
-  render() {
-    const { name, text, ...rest } = this.props;
-    const { delayFinished } = this.state;
 
-    if (!delayFinished) return <span />;
+Spinner.propTypes = {
+  /** Delay in ms before displaying the spinner */
+  delay: PropTypes.number,
+  /** Name of the Icon to use. */
+  name: PropTypes.string,
+  /** Text to show while loading. */
+  text: PropTypes.string,
+};
 
-    return <span><Icon name={name} spin {...rest} /> {text}</span>;
-  }
-}
+Spinner.defaultProps = {
+  name: 'spinner',
+  text: 'Loading...',
+  delay: 200,
+};
 
 export default Spinner;
