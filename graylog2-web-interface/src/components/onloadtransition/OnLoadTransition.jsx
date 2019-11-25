@@ -2,25 +2,27 @@
 import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import PropTypes from 'prop-types';
+import { Transition } from 'react-transition-group';
 
-const fadeIn = keyframes`
-  0% {
-      opacity: 0;
-  }
-  100% {
-      opacity: 1;
-  }
+export const Wrapper = styled.div`
+will-change: opacity;
+  transition: opacity ${(props): number => props.duration}ms ease-in;
+  transition-delay: ${(props): number => props.delay}ms;
+
+  opacity: 0;
+  
+  ${(props): string => {
+    switch (props.state) {
+      case 'entered':
+        return `
+          opacity: 1;
+          will-change: auto;
+        `;
+      default:
+        return '';
+    }
+  }}
 `;
-
-type TransitionProps = {
-  duration: number,
-  delay: number,
-}
-
-const Transition = styled.div(({ duration, delay }: TransitionProps) => css`
-  animation: ${duration}ms ease-out ${delay}ms 1 ${fadeIn};
-`);
-
 type Props = {
   duration?: number,
   delay?: number,
@@ -29,7 +31,21 @@ type Props = {
 }
 
 const OnLoadTransition = ({ children, duration, delay, className, ...rest }: Props) => {
-  return (<Transition duration={duration} delay={delay} className={className} {...rest}>{children}</Transition>);
+  return (
+    <Transition in appear timeout={0} mountOnEnter>
+      {(state: 'entering' | 'entered' | 'exiting' | 'exited'): JSX.Element => {
+        return (
+          <Wrapper duration={duration}
+                   delay={delay}
+                   className={className}
+                   {...rest}
+                   state={state}>
+            {children}
+          </Wrapper>
+        );
+      }}
+    </Transition>
+  );
 };
 
 OnLoadTransition.propTypes = {
