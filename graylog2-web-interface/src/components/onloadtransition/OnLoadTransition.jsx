@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { Transition } from 'react-transition-group';
 
 export const Wrapper = styled.div`
-will-change: opacity;
+  will-change: opacity;
   transition: opacity ${(props): number => props.duration}ms ease-in;
   transition-delay: ${(props): number => props.delay}ms;
 
