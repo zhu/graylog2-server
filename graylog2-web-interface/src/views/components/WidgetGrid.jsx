@@ -91,7 +91,7 @@ class WidgetGrid extends React.Component {
       const widgetTitle = titles.getIn([TitleTypes.Widget, widget.id], WidgetGrid._defaultTitle(widget));
 
       returnedWidgets.widgets.push(
-        <OnLoadTransition key={widget.id} className={style.widgetContainer}>
+        <div key={widget.id} className={style.widgetContainer}>
           <WidgetContext.Provider value={widget}>
             <AdditionalContext.Provider value={{ widget }}>
               <Widget key={widgetId}
@@ -109,7 +109,7 @@ class WidgetGrid extends React.Component {
                       title={widgetTitle} />
             </AdditionalContext.Provider>
           </WidgetContext.Provider>
-        </OnLoadTransition>,
+        </div>,
       );
     });
 
@@ -121,22 +121,24 @@ class WidgetGrid extends React.Component {
     // eslint-disable-next-line react/destructuring-assignment
     const { widgets, positions } = this._renderWidgets(this.props.widgets, this.props.positions, data, errors);
     const grid = widgets && widgets.length > 0 ? (
-      <ReactGridContainer animate
-                          locked={locked}
-                          columns={{
-                            xxl: 12,
-                            xl: 12,
-                            lg: 12,
-                            md: 12,
-                            sm: 12,
-                            xs: 12,
-                          }}
-                          measureBeforeMount
-                          onPositionsChange={onPositionsChange}
-                          positions={positions}
-                          useDragHandle=".widget-drag-handle">
-        {widgets}
-      </ReactGridContainer>
+      <OnLoadTransition>
+        <ReactGridContainer animate
+                            locked={locked}
+                            columns={{
+                              xxl: 12,
+                              xl: 12,
+                              lg: 12,
+                              md: 12,
+                              sm: 12,
+                              xs: 12,
+                            }}
+                            measureBeforeMount
+                            onPositionsChange={onPositionsChange}
+                            positions={positions}
+                            useDragHandle=".widget-drag-handle">
+          {widgets}
+        </ReactGridContainer>
+      </OnLoadTransition>
     ) : <span />;
     return (
       <SizeMe monitorWidth refreshRate={100}>
