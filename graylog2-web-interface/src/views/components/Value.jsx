@@ -13,7 +13,7 @@ type Props = {|
   field: string,
   value: *,
   render?: ValueRenderer,
-  queryId: string,
+  queryId: ?string,
   type: FieldType,
 |};
 
@@ -26,13 +26,13 @@ const Value = ({ children, field, value, queryId, render = defaultRenderer, type
 
   return (
     <InteractiveContext.Consumer>
-      {interactive => (interactive
+      {interactive => ((interactive && queryId)
         ? (
           <ValueActions element={children || element} field={field} queryId={queryId} type={type} value={value}>
             {field} = <TypeSpecificValue field={field} value={value} type={type} truncate />
           </ValueActions>
         )
-        : <span><TypeSpecificValue field={field} value={value} type={type} truncate /></span>)}
+        : <span><TypeSpecificValue field={field} value={value} type={type} /></span>)}
     </InteractiveContext.Consumer>
   );
 };

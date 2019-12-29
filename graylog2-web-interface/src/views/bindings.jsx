@@ -1,4 +1,5 @@
 // @flow strict
+import React from 'react';
 import Routes from 'routing/Routes';
 import * as Permissions from 'views/Permissions';
 
@@ -20,10 +21,14 @@ import PieVisualization from 'views/components/visualizations/pie/PieVisualizati
 import ScatterVisualization from 'views/components/visualizations/scatter/ScatterVisualization';
 import WorldMapVisualization from 'views/components/visualizations/worldmap/WorldMapVisualization';
 import HeatmapVisualization from 'views/components/visualizations/heatmap/HeatmapVisualization';
+import MigrateFieldCharts from 'views/components/MigrateFieldCharts';
+import IfSearch from 'views/components/search/IfSearch';
 
 import PivotConfigGenerator from 'views/logic/searchtypes/aggregation/PivotConfigGenerator';
 import PivotHandler from 'views/logic/searchtypes/pivot/PivotHandler';
 import PivotTransformer from 'views/logic/searchresulttransformers/PivotTransformer';
+
+import EventHandler from 'views/logic/searchtypes/events/EventHandler';
 
 import Widget from 'views/logic/widgets/Widget';
 import AggregationWidget from 'views/logic/aggregationbuilder/AggregationWidget';
@@ -34,7 +39,7 @@ import ExcludeFromQueryHandler from 'views/logic/valueactions/ExcludeFromQueryHa
 import { isFunction } from 'views/logic/aggregationbuilder/Series';
 import AggregationControls from 'views/components/aggregationbuilder/AggregationControls';
 import EditMessageList from 'views/components/widgets/EditMessageList';
-import { DashboardsPage, ShowViewPage, NewSearchPage, ViewManagementPage } from 'views/pages';
+import { DashboardsPage, ShowViewPage, NewSearchPage, ViewManagementPage, NewDashboardPage, StreamSearchPage } from 'views/pages';
 import AppWithExtendedSearchBar from 'routing/AppWithExtendedSearchBar';
 
 import AddMessageCountActionHandler from 'views/logic/fieldactions/AddMessageCountActionHandler';
@@ -59,6 +64,7 @@ import HighlightValueHandler from 'views/logic/valueactions/HighlightValueHandle
 import FieldNameCompletion from 'views/components/searchbar/completions/FieldNameCompletion';
 import OperatorCompletion from 'views/components/searchbar/completions/OperatorCompletion';
 import requirementsProvided from 'views/hooks/RequirementsProvided';
+import bindSearchParamsFromQuery from 'views/hooks/BindSearchParamsFromQuery';
 import {
   dashboardsPath, dashboardsTvPath,
   extendedSearchPath,
@@ -68,10 +74,8 @@ import {
   showSearchPath,
   viewsPath,
 } from 'views/Constants';
-import NewDashboardPage from 'views/pages/NewDashboardPage';
-import StreamSearchPage from 'views/pages/StreamSearchPage';
 import ShowDashboardInBigDisplayMode from 'views/pages/ShowDashboardInBigDisplayMode';
-import AppConfig from 'util/AppConfig';
+import LookupTableParameter from 'views/logic/parameters/LookupTableParameter';
 import type { ActionHandlerArguments, ActionHandlerCondition } from './components/actions/ActionHandler';
 import NumberVisualizationConfig from './logic/aggregationbuilder/visualizations/NumberVisualizationConfig';
 import BarVisualizationConfiguration from './components/aggregationbuilder/BarVisualizationConfiguration';
@@ -81,6 +85,10 @@ import LineVisualizationConfig from './logic/aggregationbuilder/visualizations/L
 import AreaVisualizationConfig from './logic/aggregationbuilder/visualizations/AreaVisualizationConfig';
 import LineVisualizationConfiguration from './components/aggregationbuilder/LineVisualizationConfiguration';
 import AreaVisualizationConfiguration from './components/aggregationbuilder/AreaVisualizationConfiguration';
+import Parameter from './logic/parameters/Parameter';
+import ValueParameter from './logic/parameters/ValueParameter';
+import MessageConfigGenerator from './logic/searchtypes/MessageConfigGenerator';
+import UnknownWidget from './components/widgets/UnknownWidget';
 
 Widget.registerSubtype(AggregationWidget.type, AggregationWidget);
 Widget.registerSubtype(MessagesWidget.type, MessagesWidget);
@@ -98,31 +106,20 @@ ViewSharing.registerSubtype(AllUsersOfInstance.Type, AllUsersOfInstance);
 ViewSharing.registerSubtype(SpecificRoles.Type, SpecificRoles);
 ViewSharing.registerSubtype(SpecificUsers.Type, SpecificUsers);
 
-const enableNewSearch = AppConfig.isFeatureEnabled('search_3_2');
+Parameter.registerSubtype(ValueParameter.type, ValueParameter);
+Parameter.registerSubtype(LookupTableParameter.type, LookupTableParameter);
 
-const searchRoutes = enableNewSearch
-  ? [
+export default {
+  pages: {
+    search: { component: NewSearchPage },
+  },
+  routes: [
     { path: newDashboardsPath, component: NewDashboardPage, parentComponent: AppWithExtendedSearchBar },
     { path: showSearchPath, component: ShowViewPage, parentComponent: AppWithExtendedSearchBar },
     { path: dashboardsTvPath, component: ShowDashboardInBigDisplayMode, parentComponent: null },
     { path: Routes.stream_search(':streamId'), component: StreamSearchPage, parentComponent: AppWithExtendedSearchBar },
     { path: dashboardsPath, component: DashboardsPage },
     { path: showDashboardsPath, component: ShowViewPage },
-  ]
-  : [];
-
-const searchPages = enableNewSearch
-  ? {
-    search: { component: NewSearchPage },
-  }
-  : {};
-
-export default {
-  pages: {
-    ...searchPages,
-  },
-  routes: [
-    ...searchRoutes,
     { path: extendedSearchPath, component: NewSearchPage, permissions: Permissions.ExtendedSearch.Use },
     { path: viewsPath, component: ViewManagementPage, permissions: Permissions.View.Use },
     { path: showViewsPath, component: ShowViewPage, parentComponent: AppWithExtendedSearchBar },
@@ -136,7 +133,7 @@ export default {
       visualizationComponent: MessageList,
       editComponent: EditMessageList,
       searchResultTransformer: (data: Array<*>) => data[0],
-      searchTypes: () => [{ type: 'messages' }],
+      searchTypes: MessageConfigGenerator,
       titleGenerator: () => 'Untitled Message Table',
     },
     {
@@ -158,6 +155,12 @@ export default {
         return 'Untitled Aggregation';
       },
     },
+    {
+      type: 'default',
+      visualizationComponent: UnknownWidget,
+      editComponent: UnknownWidget,
+      searchTypes: () => [],
+    },
   ],
   searchTypes: [
     {
@@ -173,6 +176,11 @@ export default {
       handler: PivotHandler,
       defaults: {},
     },
+    {
+      type: 'events',
+      handler: EventHandler,
+      defaults: {},
+    },
   ],
   fieldActions: [
     {
@@ -185,11 +193,12 @@ export default {
       type: 'aggregate',
       title: 'Aggregate',
       handler: AggregateActionHandler,
-      isEnabled: (({ type }) => !type.isCompound(): ActionHandlerCondition),
+      isEnabled: (({ type }) => (!type.isCompound() && !type.isDecorated()): ActionHandlerCondition),
     },
     {
       type: 'statistics',
       title: 'Statistics',
+      isEnabled: (({ type }) => !type.isDecorated(): ActionHandlerCondition),
       handler: FieldStatisticsHandler,
     },
     {
@@ -210,11 +219,13 @@ export default {
       type: 'add-to-all-tables',
       title: 'Add to all tables',
       handler: AddToAllTablesActionHandler,
+      isEnabled: (({ type }) => !type.isDecorated(): ActionHandlerCondition),
     },
     {
       type: 'remove-from-all-tables',
       title: 'Remove from all tables',
       handler: RemoveFromAllTablesActionHandler,
+      isEnabled: (({ type }) => !type.isDecorated(): ActionHandlerCondition),
     },
   ],
   valueActions: [
@@ -222,13 +233,13 @@ export default {
       type: 'exclude',
       title: 'Exclude from results',
       handler: new ExcludeFromQueryHandler().handle,
-      isEnabled: ({ field }: ActionHandlerArguments) => !isFunction(field),
+      isEnabled: ({ field, type }: ActionHandlerArguments) => (!isFunction(field) && !type.isDecorated()),
     },
     {
       type: 'add-to-query',
       title: 'Add to query',
       handler: new AddToQueryHandler().handle,
-      isEnabled: ({ field }: ActionHandlerArguments) => !isFunction(field),
+      isEnabled: ({ field, type }: ActionHandlerArguments) => (!isFunction(field) && !type.isDecorated()),
     },
     {
       type: 'new-query',
@@ -245,7 +256,7 @@ export default {
     {
       type: 'create-extractor',
       title: 'Create extractor',
-      isEnabled: (({ type }) => type.type === 'string': ActionHandlerCondition),
+      isEnabled: (({ type }) => (type.type === 'string' && !type.isDecorated()): ActionHandlerCondition),
       component: SelectExtractorType,
     },
     {
@@ -343,5 +354,9 @@ export default {
   ],
   'views.hooks.loadingView': [
     requirementsProvided,
+    bindSearchParamsFromQuery,
+  ],
+  'views.elements.header': [
+    () => <IfSearch><MigrateFieldCharts /></IfSearch>,
   ],
 };

@@ -40,9 +40,8 @@ import org.graylog.plugins.views.search.SearchJob;
 import org.graylog.plugins.views.search.SearchType;
 import org.graylog.plugins.views.search.elasticsearch.searchtypes.ESSearchTypeHandler;
 import org.graylog.plugins.views.search.engine.QueryBackend;
-import org.graylog.plugins.views.search.errors.QueryError;
-import org.graylog.plugins.views.search.errors.SearchException;
 import org.graylog.plugins.views.search.errors.SearchTypeError;
+import org.graylog.plugins.views.search.errors.SearchTypeErrorParser;
 import org.graylog.plugins.views.search.filter.AndFilter;
 import org.graylog.plugins.views.search.filter.OrFilter;
 import org.graylog.plugins.views.search.filter.QueryStringFilter;
@@ -78,6 +77,7 @@ import java.util.stream.StreamSupport;
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.graylog2.indexer.cluster.jest.JestUtils.deduplicateErrors;
+
 
 public class ElasticsearchBackend implements QueryBackend<ESGeneratedQueryContext> {
     private static final Logger LOG = LoggerFactory.getLogger(ElasticsearchBackend.class);
@@ -115,9 +115,6 @@ public class ElasticsearchBackend implements QueryBackend<ESGeneratedQueryContex
         final ElasticsearchQueryString backendQuery = (ElasticsearchQueryString) query.query();
 
         final Set<SearchType> searchTypes = query.searchTypes();
-        if (searchTypes.isEmpty()) {
-            throw new SearchException(new QueryError(query, "Cannot generate query without any search types"));
-        }
 
         final String queryString = this.esQueryDecorators.decorate(backendQuery.queryString(), job, query, results);
         final QueryBuilder normalizedRootQuery = normalizeQueryString(queryString);
@@ -213,6 +210,13 @@ public class ElasticsearchBackend implements QueryBackend<ESGeneratedQueryContex
 
     @Override
     public QueryResult doRun(SearchJob job, Query query, ESGeneratedQueryContext queryContext, Set<QueryResult> predecessorResults) {
+        if (query.searchTypes().isEmpty()) {
+            return QueryResult.builder()
+                    .query(query)
+                    .searchTypes(Collections.emptyMap())
+                    .errors(new HashSet<>(queryContext.errors()))
+                    .build();
+        }
         LOG.debug("Running query {} for job {}", query.id(), job.getId());
         final HashMap<String, SearchType.Result> resultsMap = Maps.newHashMap();
 
@@ -275,9 +279,11 @@ public class ElasticsearchBackend implements QueryBackend<ESGeneratedQueryContex
             final int searchTypeIndex = searchTypeIds.indexOf(searchTypeId);
             final MultiSearchResult.MultiSearchResponse multiSearchResponse = result.getResponses().get(searchTypeIndex);
             if (multiSearchResponse.isError) {
-                queryContext.addError(new SearchTypeError(query, searchTypeId, JestUtils.specificException(() -> "Search type returned error: ", multiSearchResponse.error)));
+                ElasticsearchException e = JestUtils.specificException(() -> "Search type returned error: ", multiSearchResponse.error);
+                queryContext.addError(SearchTypeErrorParser.parse(query, searchTypeId, e));
             } else if (checkForFailedShards(multiSearchResponse.searchResult).isPresent()) {
-                queryContext.addError(new SearchTypeError(query, searchTypeId, checkForFailedShards(multiSearchResponse.searchResult).get()));
+                ElasticsearchException e = checkForFailedShards(multiSearchResponse.searchResult).get();
+                queryContext.addError(SearchTypeErrorParser.parse(query, searchTypeId, e));
             } else {
                 final SearchType.Result searchTypeResult = handler.extractResult(job, query, searchType, multiSearchResponse.searchResult, queryContext);
                 if (searchTypeResult != null) {
@@ -293,6 +299,8 @@ public class ElasticsearchBackend implements QueryBackend<ESGeneratedQueryContex
                 .errors(new HashSet<>(queryContext.errors()))
                 .build();
     }
+
+
 
     private Optional<ElasticsearchException> checkForFailedShards(SearchResult result) {
         // unwrap shard failure due to non-numeric mapping. this happens when searching across index sets
@@ -343,7 +351,7 @@ public class ElasticsearchBackend implements QueryBackend<ESGeneratedQueryContex
         final String mainQueryString = ((ElasticsearchQueryString) query.query()).queryString();
         final java.util.stream.Stream<String> queryStringStreams = java.util.stream.Stream.concat(
                 java.util.stream.Stream.of(mainQueryString),
-                query.searchTypes().stream().flatMap(searchType -> queryStringsFromFilter(searchType.filter()).stream())
+                query.searchTypes().stream().flatMap(this::queryStringsFromSearchType)
         );
 
         final QueryMetadata metadataForParameters = queryStringStreams
@@ -354,5 +362,15 @@ public class ElasticsearchBackend implements QueryBackend<ESGeneratedQueryContex
 
 
         return metadataForParameters;
+    }
+
+    private java.util.stream.Stream<String> queryStringsFromSearchType(SearchType searchType) {
+        return java.util.stream.Stream.concat(
+                searchType.query().filter(query -> query instanceof ElasticsearchQueryString)
+                        .map(query -> ((ElasticsearchQueryString) query).queryString())
+                        .map(java.util.stream.Stream::of)
+                        .orElse(java.util.stream.Stream.empty()),
+                queryStringsFromFilter(searchType.filter()).stream()
+        );
     }
 }

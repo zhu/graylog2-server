@@ -1,10 +1,9 @@
-import React from 'react';
+import { createGlobalStyle } from 'styled-components';
 
-import FormControlValidationStyles from './styles/FormControlValidationStyles';
+import { progressBarStyles } from 'components/graylog/ProgressBar.jsx';
 
-const GlobalThemeStyles = () => {
-  return (<FormControlValidationStyles />);
-};
+const GlobalThemeStyles = createGlobalStyle`
+  ${progressBarStyles};
+`;
 
 export default GlobalThemeStyles;
-export { FormControlValidationStyles };
