@@ -76,6 +76,7 @@ export default class ViewPropertiesModal extends React.Component {
                type="text"
                name="title"
                label="Title"
+               autoFocus
                help="The title of the dashboard."
                required
                onChange={this._onChange}
