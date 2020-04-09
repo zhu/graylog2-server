@@ -1,7 +1,5 @@
 import { createGlobalStyle, css } from 'styled-components';
 
-import './fonts/fonts.css';
-
 const fontFamily = '"Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif';
 
 const GlobalThemeStyles = createGlobalStyle(({ theme }) => css`
