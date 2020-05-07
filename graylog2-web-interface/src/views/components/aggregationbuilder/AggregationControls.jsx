@@ -6,7 +6,6 @@ import * as Immutable from 'immutable';
 import { PluginStore } from 'graylog-web-plugin/plugin';
 import styled, { type StyledComponent } from 'styled-components';
 
-import { defaultCompare } from 'views/logic/DefaultCompare';
 import AggregationWidgetConfig from 'views/logic/aggregationbuilder/AggregationWidgetConfig';
 import FieldTypeMapping from 'views/logic/fieldtypes/FieldTypeMapping';
 
@@ -139,7 +138,6 @@ export default class AggregationControls extends React.Component<Props, State> {
         .map((fieldType) => fieldType.name)
         .valueSeq()
         .toJS()
-        .sort(defaultCompare)
       : [];
     const formattedFieldsOptions = formattedFields.map((v) => ({ label: v, value: v }));
     const suggester = new SeriesFunctionsSuggester(formattedFields);

@@ -51,16 +51,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
           "value": "group",
         },
         Object {
-          "label": "Stack",
-          "value": "stack",
+          "label": "Overlay",
+          "value": "overlay",
         },
         Object {
           "label": "Relative",
           "value": "relative",
         },
         Object {
-          "label": "Overlay",
-          "value": "overlay",
+          "label": "Stack",
+          "value": "stack",
         },
       ]
     }
@@ -93,16 +93,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
             "value": "group",
           },
           Object {
-            "label": "Stack",
-            "value": "stack",
+            "label": "Overlay",
+            "value": "overlay",
           },
           Object {
             "label": "Relative",
             "value": "relative",
           },
           Object {
-            "label": "Overlay",
-            "value": "overlay",
+            "label": "Stack",
+            "value": "stack",
           },
         ]
       }
@@ -173,16 +173,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
               "value": "group",
             },
             Object {
-              "label": "Stack",
-              "value": "stack",
+              "label": "Overlay",
+              "value": "overlay",
             },
             Object {
               "label": "Relative",
               "value": "relative",
             },
             Object {
-              "label": "Overlay",
-              "value": "overlay",
+              "label": "Stack",
+              "value": "stack",
             },
           ]
         }
@@ -231,16 +231,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                 "value": "group",
               },
               Object {
-                "label": "Stack",
-                "value": "stack",
+                "label": "Overlay",
+                "value": "overlay",
               },
               Object {
                 "label": "Relative",
                 "value": "relative",
               },
               Object {
-                "label": "Overlay",
-                "value": "overlay",
+                "label": "Stack",
+                "value": "stack",
               },
             ]
           }
@@ -291,16 +291,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                   "value": "group",
                 },
                 Object {
-                  "label": "Stack",
-                  "value": "stack",
+                  "label": "Overlay",
+                  "value": "overlay",
                 },
                 Object {
                   "label": "Relative",
                   "value": "relative",
                 },
                 Object {
-                  "label": "Overlay",
-                  "value": "overlay",
+                  "label": "Stack",
+                  "value": "stack",
                 },
               ],
               "pageSize": 5,
@@ -382,16 +382,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                     "value": "group",
                   },
                   Object {
-                    "label": "Stack",
-                    "value": "stack",
+                    "label": "Overlay",
+                    "value": "overlay",
                   },
                   Object {
                     "label": "Relative",
                     "value": "relative",
                   },
                   Object {
-                    "label": "Overlay",
-                    "value": "overlay",
+                    "label": "Stack",
+                    "value": "stack",
                   },
                 ]
               }
@@ -442,16 +442,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                       "value": "group",
                     },
                     Object {
-                      "label": "Stack",
-                      "value": "stack",
+                      "label": "Overlay",
+                      "value": "overlay",
                     },
                     Object {
                       "label": "Relative",
                       "value": "relative",
                     },
                     Object {
-                      "label": "Overlay",
-                      "value": "overlay",
+                      "label": "Stack",
+                      "value": "stack",
                     },
                   ],
                   "pageSize": 5,
@@ -525,16 +525,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                         "value": "group",
                       },
                       Object {
-                        "label": "Stack",
-                        "value": "stack",
+                        "label": "Overlay",
+                        "value": "overlay",
                       },
                       Object {
                         "label": "Relative",
                         "value": "relative",
                       },
                       Object {
-                        "label": "Overlay",
-                        "value": "overlay",
+                        "label": "Stack",
+                        "value": "stack",
                       },
                     ]
                   }
@@ -585,16 +585,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                           "value": "group",
                         },
                         Object {
-                          "label": "Stack",
-                          "value": "stack",
+                          "label": "Overlay",
+                          "value": "overlay",
                         },
                         Object {
                           "label": "Relative",
                           "value": "relative",
                         },
                         Object {
-                          "label": "Overlay",
-                          "value": "overlay",
+                          "label": "Stack",
+                          "value": "stack",
                         },
                       ],
                       "pageSize": 5,
@@ -672,16 +672,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                             "value": "group",
                           },
                           Object {
-                            "label": "Stack",
-                            "value": "stack",
+                            "label": "Overlay",
+                            "value": "overlay",
                           },
                           Object {
                             "label": "Relative",
                             "value": "relative",
                           },
                           Object {
-                            "label": "Overlay",
-                            "value": "overlay",
+                            "label": "Stack",
+                            "value": "stack",
                           },
                         ]
                       }
@@ -732,16 +732,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                               "value": "group",
                             },
                             Object {
-                              "label": "Stack",
-                              "value": "stack",
+                              "label": "Overlay",
+                              "value": "overlay",
                             },
                             Object {
                               "label": "Relative",
                               "value": "relative",
                             },
                             Object {
-                              "label": "Overlay",
-                              "value": "overlay",
+                              "label": "Stack",
+                              "value": "stack",
                             },
                           ],
                           "pageSize": 5,
@@ -860,16 +860,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                               "value": "group",
                             },
                             Object {
-                              "label": "Stack",
-                              "value": "stack",
+                              "label": "Overlay",
+                              "value": "overlay",
                             },
                             Object {
                               "label": "Relative",
                               "value": "relative",
                             },
                             Object {
-                              "label": "Overlay",
-                              "value": "overlay",
+                              "label": "Stack",
+                              "value": "stack",
                             },
                           ],
                           "pageSize": 5,
@@ -1031,16 +1031,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                         "value": "group",
                       },
                       Object {
-                        "label": "Stack",
-                        "value": "stack",
+                        "label": "Overlay",
+                        "value": "overlay",
                       },
                       Object {
                         "label": "Relative",
                         "value": "relative",
                       },
                       Object {
-                        "label": "Overlay",
-                        "value": "overlay",
+                        "label": "Stack",
+                        "value": "stack",
                       },
                     ]
                   }
@@ -1091,16 +1091,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                           "value": "group",
                         },
                         Object {
-                          "label": "Stack",
-                          "value": "stack",
+                          "label": "Overlay",
+                          "value": "overlay",
                         },
                         Object {
                           "label": "Relative",
                           "value": "relative",
                         },
                         Object {
-                          "label": "Overlay",
-                          "value": "overlay",
+                          "label": "Stack",
+                          "value": "stack",
                         },
                       ],
                       "pageSize": 5,
@@ -1173,16 +1173,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                             "value": "group",
                           },
                           Object {
-                            "label": "Stack",
-                            "value": "stack",
+                            "label": "Overlay",
+                            "value": "overlay",
                           },
                           Object {
                             "label": "Relative",
                             "value": "relative",
                           },
                           Object {
-                            "label": "Overlay",
-                            "value": "overlay",
+                            "label": "Stack",
+                            "value": "stack",
                           },
                         ]
                       }
@@ -1233,16 +1233,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                               "value": "group",
                             },
                             Object {
-                              "label": "Stack",
-                              "value": "stack",
+                              "label": "Overlay",
+                              "value": "overlay",
                             },
                             Object {
                               "label": "Relative",
                               "value": "relative",
                             },
                             Object {
-                              "label": "Overlay",
-                              "value": "overlay",
+                              "label": "Stack",
+                              "value": "stack",
                             },
                           ],
                           "pageSize": 5,
@@ -1323,16 +1323,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                             "value": "group",
                           },
                           Object {
-                            "label": "Stack",
-                            "value": "stack",
+                            "label": "Overlay",
+                            "value": "overlay",
                           },
                           Object {
                             "label": "Relative",
                             "value": "relative",
                           },
                           Object {
-                            "label": "Overlay",
-                            "value": "overlay",
+                            "label": "Stack",
+                            "value": "stack",
                           },
                         ]
                       }
@@ -1383,16 +1383,16 @@ exports[`BarVisualizationConfiguration should render with props 1`] = `
                               "value": "group",
                             },
                             Object {
-                              "label": "Stack",
-                              "value": "stack",
+                              "label": "Overlay",
+                              "value": "overlay",
                             },
                             Object {
                               "label": "Relative",
                               "value": "relative",
                             },
                             Object {
-                              "label": "Overlay",
-                              "value": "overlay",
+                              "label": "Stack",
+                              "value": "stack",
                             },
                           ],
                           "pageSize": 5,
@@ -1534,16 +1534,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
           "value": "group",
         },
         Object {
-          "label": "Stack",
-          "value": "stack",
+          "label": "Overlay",
+          "value": "overlay",
         },
         Object {
           "label": "Relative",
           "value": "relative",
         },
         Object {
-          "label": "Overlay",
-          "value": "overlay",
+          "label": "Stack",
+          "value": "stack",
         },
       ]
     }
@@ -1576,16 +1576,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
             "value": "group",
           },
           Object {
-            "label": "Stack",
-            "value": "stack",
+            "label": "Overlay",
+            "value": "overlay",
           },
           Object {
             "label": "Relative",
             "value": "relative",
           },
           Object {
-            "label": "Overlay",
-            "value": "overlay",
+            "label": "Stack",
+            "value": "stack",
           },
         ]
       }
@@ -1656,16 +1656,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
               "value": "group",
             },
             Object {
-              "label": "Stack",
-              "value": "stack",
+              "label": "Overlay",
+              "value": "overlay",
             },
             Object {
               "label": "Relative",
               "value": "relative",
             },
             Object {
-              "label": "Overlay",
-              "value": "overlay",
+              "label": "Stack",
+              "value": "stack",
             },
           ]
         }
@@ -1714,16 +1714,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                 "value": "group",
               },
               Object {
-                "label": "Stack",
-                "value": "stack",
+                "label": "Overlay",
+                "value": "overlay",
               },
               Object {
                 "label": "Relative",
                 "value": "relative",
               },
               Object {
-                "label": "Overlay",
-                "value": "overlay",
+                "label": "Stack",
+                "value": "stack",
               },
             ]
           }
@@ -1774,16 +1774,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                   "value": "group",
                 },
                 Object {
-                  "label": "Stack",
-                  "value": "stack",
+                  "label": "Overlay",
+                  "value": "overlay",
                 },
                 Object {
                   "label": "Relative",
                   "value": "relative",
                 },
                 Object {
-                  "label": "Overlay",
-                  "value": "overlay",
+                  "label": "Stack",
+                  "value": "stack",
                 },
               ],
               "pageSize": 5,
@@ -1865,16 +1865,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                     "value": "group",
                   },
                   Object {
-                    "label": "Stack",
-                    "value": "stack",
+                    "label": "Overlay",
+                    "value": "overlay",
                   },
                   Object {
                     "label": "Relative",
                     "value": "relative",
                   },
                   Object {
-                    "label": "Overlay",
-                    "value": "overlay",
+                    "label": "Stack",
+                    "value": "stack",
                   },
                 ]
               }
@@ -1925,16 +1925,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                       "value": "group",
                     },
                     Object {
-                      "label": "Stack",
-                      "value": "stack",
+                      "label": "Overlay",
+                      "value": "overlay",
                     },
                     Object {
                       "label": "Relative",
                       "value": "relative",
                     },
                     Object {
-                      "label": "Overlay",
-                      "value": "overlay",
+                      "label": "Stack",
+                      "value": "stack",
                     },
                   ],
                   "pageSize": 5,
@@ -2008,16 +2008,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                         "value": "group",
                       },
                       Object {
-                        "label": "Stack",
-                        "value": "stack",
+                        "label": "Overlay",
+                        "value": "overlay",
                       },
                       Object {
                         "label": "Relative",
                         "value": "relative",
                       },
                       Object {
-                        "label": "Overlay",
-                        "value": "overlay",
+                        "label": "Stack",
+                        "value": "stack",
                       },
                     ]
                   }
@@ -2068,16 +2068,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                           "value": "group",
                         },
                         Object {
-                          "label": "Stack",
-                          "value": "stack",
+                          "label": "Overlay",
+                          "value": "overlay",
                         },
                         Object {
                           "label": "Relative",
                           "value": "relative",
                         },
                         Object {
-                          "label": "Overlay",
-                          "value": "overlay",
+                          "label": "Stack",
+                          "value": "stack",
                         },
                       ],
                       "pageSize": 5,
@@ -2155,16 +2155,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                             "value": "group",
                           },
                           Object {
-                            "label": "Stack",
-                            "value": "stack",
+                            "label": "Overlay",
+                            "value": "overlay",
                           },
                           Object {
                             "label": "Relative",
                             "value": "relative",
                           },
                           Object {
-                            "label": "Overlay",
-                            "value": "overlay",
+                            "label": "Stack",
+                            "value": "stack",
                           },
                         ]
                       }
@@ -2215,16 +2215,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                               "value": "group",
                             },
                             Object {
-                              "label": "Stack",
-                              "value": "stack",
+                              "label": "Overlay",
+                              "value": "overlay",
                             },
                             Object {
                               "label": "Relative",
                               "value": "relative",
                             },
                             Object {
-                              "label": "Overlay",
-                              "value": "overlay",
+                              "label": "Stack",
+                              "value": "stack",
                             },
                           ],
                           "pageSize": 5,
@@ -2343,16 +2343,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                               "value": "group",
                             },
                             Object {
-                              "label": "Stack",
-                              "value": "stack",
+                              "label": "Overlay",
+                              "value": "overlay",
                             },
                             Object {
                               "label": "Relative",
                               "value": "relative",
                             },
                             Object {
-                              "label": "Overlay",
-                              "value": "overlay",
+                              "label": "Stack",
+                              "value": "stack",
                             },
                           ],
                           "pageSize": 5,
@@ -2514,16 +2514,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                         "value": "group",
                       },
                       Object {
-                        "label": "Stack",
-                        "value": "stack",
+                        "label": "Overlay",
+                        "value": "overlay",
                       },
                       Object {
                         "label": "Relative",
                         "value": "relative",
                       },
                       Object {
-                        "label": "Overlay",
-                        "value": "overlay",
+                        "label": "Stack",
+                        "value": "stack",
                       },
                     ]
                   }
@@ -2574,16 +2574,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                           "value": "group",
                         },
                         Object {
-                          "label": "Stack",
-                          "value": "stack",
+                          "label": "Overlay",
+                          "value": "overlay",
                         },
                         Object {
                           "label": "Relative",
                           "value": "relative",
                         },
                         Object {
-                          "label": "Overlay",
-                          "value": "overlay",
+                          "label": "Stack",
+                          "value": "stack",
                         },
                       ],
                       "pageSize": 5,
@@ -2656,16 +2656,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                             "value": "group",
                           },
                           Object {
-                            "label": "Stack",
-                            "value": "stack",
+                            "label": "Overlay",
+                            "value": "overlay",
                           },
                           Object {
                             "label": "Relative",
                             "value": "relative",
                           },
                           Object {
-                            "label": "Overlay",
-                            "value": "overlay",
+                            "label": "Stack",
+                            "value": "stack",
                           },
                         ]
                       }
@@ -2716,16 +2716,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                               "value": "group",
                             },
                             Object {
-                              "label": "Stack",
-                              "value": "stack",
+                              "label": "Overlay",
+                              "value": "overlay",
                             },
                             Object {
                               "label": "Relative",
                               "value": "relative",
                             },
                             Object {
-                              "label": "Overlay",
-                              "value": "overlay",
+                              "label": "Stack",
+                              "value": "stack",
                             },
                           ],
                           "pageSize": 5,
@@ -2806,16 +2806,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                             "value": "group",
                           },
                           Object {
-                            "label": "Stack",
-                            "value": "stack",
+                            "label": "Overlay",
+                            "value": "overlay",
                           },
                           Object {
                             "label": "Relative",
                             "value": "relative",
                           },
                           Object {
-                            "label": "Overlay",
-                            "value": "overlay",
+                            "label": "Stack",
+                            "value": "stack",
                           },
                         ]
                       }
@@ -2866,16 +2866,16 @@ exports[`BarVisualizationConfiguration should render without props 1`] = `
                               "value": "group",
                             },
                             Object {
-                              "label": "Stack",
-                              "value": "stack",
+                              "label": "Overlay",
+                              "value": "overlay",
                             },
                             Object {
                               "label": "Relative",
                               "value": "relative",
                             },
                             Object {
-                              "label": "Overlay",
-                              "value": "overlay",
+                              "label": "Stack",
+                              "value": "stack",
                             },
                           ],
                           "pageSize": 5,

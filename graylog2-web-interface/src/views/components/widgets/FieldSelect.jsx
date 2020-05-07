@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import * as Immutable from 'immutable';
 
-import { defaultCompare } from 'views/logic/DefaultCompare';
 import FieldTypeMapping from 'views/logic/fieldtypes/FieldTypeMapping';
 
 import CustomPropTypes from 'views/components/CustomPropTypes';
@@ -25,8 +24,7 @@ const FieldSelect = ({ fields, onChange, value, ...rest }: Props) => {
     .map((fieldType) => fieldType.name)
     .map((fieldName) => ({ label: fieldName, value: fieldName }))
     .valueSeq()
-    .toJS()
-    .sort((v1, v2) => defaultCompare(v1.label, v2.label));
+    .toJS();
 
   return (
     <SortableSelect {...rest}

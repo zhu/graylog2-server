@@ -51,6 +51,7 @@ exports[`SeriesSelect renders with minimal props 1`] = `
       menuShouldScrollIntoView={true}
       onChange={[Function]}
       onClose={[Function]}
+      options={Array []}
       placeholder="None: click to add series"
       styles={
         Object {

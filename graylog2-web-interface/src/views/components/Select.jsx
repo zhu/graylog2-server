@@ -2,10 +2,13 @@
 import React, { useRef, useMemo } from 'react';
 import type { Node, ComponentType } from 'react';
 import PropTypes from 'prop-types';
-import ReactSelect, { components as Components, Creatable as CreatableSelect } from 'react-select';
-
 import { Overlay } from 'react-overlays';
+import ReactSelect, { components as Components, Creatable as CreatableSelect } from 'react-select';
 import { createFilter } from 'react-select/lib/filters';
+
+import { defaultCompare } from 'views/logic/DefaultCompare';
+
+const sortOptions = (options = []) => options.sort(({ label: label1 }, { label: label2 }) => defaultCompare(label1, label2));
 
 const MultiValueRemove = (props) => {
   return (
@@ -72,6 +75,7 @@ const valueContainer = (base) => ({
 type Props = {
   allowOptionCreation?: boolean,
   components: { [string]: ComponentType<any> },
+  options: ?Array<{ label: string, value: any}>,
   styles: { [string]: any },
   ignoreAccents: boolean,
   ignoreCase: boolean,
@@ -101,7 +105,7 @@ const MenuOverlay = (selectRef) => (props) => {
   );
 };
 
-const Select = ({ components, styles, ignoreCase = true, ignoreAccents = false, allowOptionCreation = false, ...rest }: Props) => {
+const Select = ({ components, styles, options, ignoreCase = true, ignoreAccents = false, allowOptionCreation = false, ...rest }: Props) => {
   const selectRef = useRef(null);
   const Component = allowOptionCreation ? CreatableSelect : ReactSelect;
   const Menu = useMemo(() => MenuOverlay(selectRef), [selectRef]);
@@ -125,6 +129,7 @@ const Select = ({ components, styles, ignoreCase = true, ignoreAccents = false, 
 
   return (
     <Component {...rest}
+               options={sortOptions(options)}
                components={_components}
                filterOption={filterOption}
                styles={_styles}
@@ -136,6 +141,7 @@ const Select = ({ components, styles, ignoreCase = true, ignoreAccents = false, 
 Select.propTypes = {
   allowOptionCreation: PropTypes.bool,
   components: PropTypes.object,
+  options: PropTypes.array,
   styles: PropTypes.object,
   ignoreAccents: PropTypes.bool,
   ignoreCase: PropTypes.bool,
@@ -144,6 +150,7 @@ Select.propTypes = {
 Select.defaultProps = {
   allowOptionCreation: false,
   components: {},
+  options: [],
   styles: {},
   ignoreAccents: false,
   ignoreCase: true,

@@ -5,7 +5,6 @@ import * as Immutable from 'immutable';
 
 import CustomPropTypes from 'views/components/CustomPropTypes';
 
-import { defaultCompare } from 'views/logic/DefaultCompare';
 import Direction from 'views/logic/aggregationbuilder/Direction';
 import FieldTypeMapping from 'views/logic/fieldtypes/FieldTypeMapping';
 import SortConfig from 'views/logic/aggregationbuilder/SortConfig';
@@ -22,21 +21,13 @@ type Option = {
   value: number,
 };
 
-const findOptionByLabel = (options: Immutable.List<Option>, label: string) => options.find((option) => option.label === label);
+const findOptionByLabel = (options: Array<Option>, label: string) => options.find((option) => option.label === label);
 
-const findOptionByValue = (options: Immutable.List<Option>, value: number) => options.find((option) => option.value === value);
+const findOptionByValue = (options: Array<Option>, value: number) => options.find((option) => option.value === value);
 
-const currentValue = (sort: Array<SortConfig>, options: Immutable.List<Option>) => sort && sort.length > 0 && findOptionByLabel(options, sort[0].field);
+const currentValue = (sort: Array<SortConfig>, options: Array<Option>) => sort && sort.length > 0 && findOptionByLabel(options, sort[0].field);
 
-const sortedOptions = (fields: Immutable.List<FieldTypeMapping>) => {
-  return fields.sort(
-    (field1, field2) => defaultCompare(field1.name, field2.name),
-  ).map(
-    (field, idx) => ({ label: field.name, value: idx }),
-  );
-};
-
-const onOptionChange = (options: Immutable.List<Option>, onChange, newValue, reason) => {
+const onOptionChange = (options: Array<Option>, onChange, newValue, reason) => {
   if (reason.action === 'clear') {
     return onChange([]);
   }
@@ -50,7 +41,9 @@ const onOptionChange = (options: Immutable.List<Option>, onChange, newValue, rea
 };
 
 const FieldSortSelect = ({ fields, onChange, sort }: Props) => {
-  const options: Immutable.List<Option> = sortedOptions(fields);
+  const options: Array<Option> = fields.map(
+    (field, idx) => ({ label: field.name, value: idx }),
+  ).toJS();
   return (
     <Select placeholder="None: click to add fields"
             onChange={(newValue, reason) => onOptionChange(options, onChange, newValue, reason)}
