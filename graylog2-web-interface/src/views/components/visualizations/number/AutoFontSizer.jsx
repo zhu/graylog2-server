@@ -53,7 +53,7 @@ const AutoFontSizer = ({ children, target, height, width }: Props) => {
       // eslint-disable-next-line react/no-did-update-set-state
       setFontSize(newFontsize);
     }
-  }, [target, _container, fontSize, height, width]);
+  }, [target, _container, height, width]);
 
   // $FlowFixMe: non-ideal react type declaration requires forced casting
   const _mixedContainer: { current: mixed } = _container;
