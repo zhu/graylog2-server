@@ -24,10 +24,8 @@ const _multiplierForElement = (element, targetWidth, targetHeight) => {
   return Math.min(widthMultiplier, heightMultiplier);
 };
 
-const AutoFontSizer = ({ children, target, height, width }: Props) => {
+const useAutoFontSize = (target, _container, height, width) => {
   const [fontSize, setFontSize] = useState(20);
-  const _container = useRef<?HTMLElement>();
-
   useEffect(() => {
     const container = target ? { current: { children: [target] } } : _container;
     if (!container.current) {
@@ -54,6 +52,12 @@ const AutoFontSizer = ({ children, target, height, width }: Props) => {
       setFontSize(newFontsize);
     }
   }, [target, _container, fontSize, height, width]);
+  return fontSize;
+};
+
+const AutoFontSizer = ({ children, target, height, width }: Props) => {
+  const _container = useRef<?HTMLElement>();
+  const fontSize = useAutoFontSize(target, _container, height, width);
 
   // $FlowFixMe: non-ideal react type declaration requires forced casting
   const _mixedContainer: { current: mixed } = _container;
