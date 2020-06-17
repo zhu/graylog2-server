@@ -12,7 +12,7 @@ import FieldTypeIcon from 'views/components/sidebar/FieldTypeIcon';
 import { ViewMetadataStore } from 'views/stores/ViewMetadataStore';
 import MessageFieldsFilter from 'logic/message/MessageFieldsFilter';
 
-import styles from './FieldList.css';
+import styles from './FieldsOverview.css';
 
 const isReservedField = (fieldName) => MessageFieldsFilter.FILTERED_FIELDS.includes(fieldName);
 
