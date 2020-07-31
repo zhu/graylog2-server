@@ -25,7 +25,8 @@ const Navbar = styled(BootstrapNavbar)(({ theme }) => css`
 
   .navbar-nav {
     > li > a,
-    > li > .btn-link {
+    > li > .btn-link,
+    .dropdown-menu > li > a {
       color: ${theme.colors.variant.darkest.default};
 
       &:hover,
