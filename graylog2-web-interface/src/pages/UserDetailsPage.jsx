@@ -9,7 +9,8 @@ import { useStore } from 'stores/connect';
 import { UsersActions, UsersStore } from 'stores/users/UsersStore';
 import { PageHeader, DocumentTitle } from 'components/common';
 import UserDetails from 'components/users/UserDetails';
-import UserManagementLinks from 'components/users/UserManagementLinks';
+import UserOverviewLinks from 'components/users/navigation/UserOverviewLinks';
+import UserActionLinks from 'components/users/navigation/UserActionLinks';
 import DocumentationLink from 'components/support/DocumentationLink';
 
 type Props = {
@@ -43,7 +44,11 @@ const UserDetailsPage = ({ params }: Props) => {
 
   return (
     <DocumentTitle title={`User Details ${username ?? ''}`}>
-      <PageHeader title={<PageTitle fullName={loadedUser?.fullName} />}>
+      <PageHeader title={<PageTitle fullName={loadedUser?.fullName} />}
+                  subactions={(
+                    <UserActionLinks username={username}
+                                     userIsReadOnly={loadedUser?.readOnly} />
+                  )}>
         <span>
           Overview of details like profile information, settings, teams and roles.
         </span>
@@ -54,8 +59,7 @@ const UserDetailsPage = ({ params }: Props) => {
                              text="documentation" />
         </span>
 
-        <UserManagementLinks username={username}
-                             userIsReadOnly={loadedUser?.readOnly} />
+        <UserOverviewLinks />
       </PageHeader>
 
       <UserDetails paginatedUserShares={paginatedUserShares}
