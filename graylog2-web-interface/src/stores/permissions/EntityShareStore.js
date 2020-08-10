@@ -17,26 +17,14 @@ import type { GRN } from 'logic/permissions/types';
 
 const DEFAULT_PREPARE_PAYLOAD = {};
 
-type EntityShareStoreState = {
-  state: EntityShareState,
-};
-
-type EntityShareStoreType = Store<EntityShareStoreState>;
-
-const EntityShareStore: EntityShareStoreType = singletonStore(
+const EntityShareStore: Store<{}> = singletonStore(
   'permissions.EntityShare',
   () => Reflux.createStore({
     listenables: [EntityShareActions],
 
-    state: undefined,
-
-    getInitialState(): EntityShareStoreState {
-      return this._state();
-    },
-
     prepare(entityGRN: GRN, payload: EntitySharePayload = DEFAULT_PREPARE_PAYLOAD): Promise<EntityShareState> {
       const url = qualifyUrl(ApiRoutes.EntityShareController.prepare(entityGRN).url);
-      const promise = fetch('POST', url, JSON.stringify(payload)).then(this._handleResponse);
+      const promise = fetch('POST', url, JSON.stringify(payload)).then(EntityShareState.fromJSON);
 
       EntityShareActions.prepare.promise(promise);
 
@@ -45,7 +33,7 @@ const EntityShareStore: EntityShareStoreType = singletonStore(
 
     update(entityGRN: GRN, payload: EntitySharePayload): Promise<EntityShareState> {
       const url = qualifyUrl(ApiRoutes.EntityShareController.update(entityGRN).url);
-      const promise = fetch('POST', url, JSON.stringify(payload)).then(this._handleResponse);
+      const promise = fetch('POST', url, JSON.stringify(payload)).then(EntityShareState.fromJSON);
 
       EntityShareActions.update.promise(promise);
 
@@ -83,26 +71,6 @@ const EntityShareStore: EntityShareStoreType = singletonStore(
       EntityShareActions.searchPaginatedTeamShares.promise(promise);
 
       return promise;
-    },
-
-    _handleResponse(entityShareStateJSON: EntityShareStateJson): EntityShareState {
-      const entityShareState = EntityShareState.fromJSON(entityShareStateJSON);
-
-      this.state = entityShareState;
-
-      this._trigger();
-
-      return this.state;
-    },
-
-    _state(): EntityShareStoreState {
-      return {
-        state: this.state,
-      };
-    },
-
-    _trigger() {
-      this.trigger(this._state());
     },
   }),
 );

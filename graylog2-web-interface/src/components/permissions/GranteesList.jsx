@@ -5,7 +5,7 @@ import styled, { type StyledComponent } from 'styled-components';
 
 import type { GRN } from 'logic/permissions/types';
 import { Pagination, PageSizeSelect } from 'components/common';
-import EntityShareState, { type ActiveShares, type CapabilitiesList, type SelectedGrantees } from 'logic/permissions/EntityShareState';
+import { type ActiveShares, type CapabilitiesList, type SelectedGrantees } from 'logic/permissions/EntityShareState';
 import Grantee from 'logic/permissions/Grantee';
 import Capability from 'logic/permissions/Capability';
 import { type ThemeInterface } from 'theme';
@@ -49,11 +49,11 @@ type Props = {
   availableCapabilities: CapabilitiesList,
   className?: string,
   entityGRN: GRN,
-  onDelete: (GRN) => Promise<EntityShareState>,
+  onDelete: (GRN) => Promise<void>,
   onCapabilityChange: ({
     granteeId: $PropertyType<Grantee, 'id'>,
     capabilityId: $PropertyType<Capability, 'id'>,
-  }) => Promise<EntityShareState>,
+  }) => Promise<void>,
   selectedGrantees: SelectedGrantees,
   title: string,
 };

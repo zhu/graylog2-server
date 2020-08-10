@@ -17,6 +17,7 @@ type Props = {
   description: $PropertyType<Props, 'description'>,
   entityGRN: GRN,
   entityShareState: EntityShareState,
+  setEntityShareState: EntityShareState => void,
   setDisableSubmit: (boolean) => void,
 };
 
@@ -47,6 +48,7 @@ const EntityShareSettings = ({
     selectedGranteeCapabilities,
     selectedGrantees,
   },
+  setEntityShareState,
   description,
   entityGRN,
   setDisableSubmit,
@@ -62,7 +64,7 @@ const EntityShareSettings = ({
     return EntityShareActions.prepare(entityGRN, payload).then((response) => {
       setDisableSubmit(false);
 
-      return response;
+      setEntityShareState(response);
     });
   };
 
@@ -75,7 +77,7 @@ const EntityShareSettings = ({
     return EntityShareActions.prepare(entityGRN, payload).then((response) => {
       setDisableSubmit(false);
 
-      return response;
+      setEntityShareState(response);
     });
   };
 

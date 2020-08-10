@@ -1,12 +1,13 @@
 // @flow strict
 import * as React from 'react';
+import * as Immutable from 'immutable';
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 import { createGRN } from 'logic/permissions/GRN';
-import { useStore } from 'stores/connect';
 import { Spinner } from 'components/common';
-import { EntityShareStore, EntityShareActions } from 'stores/permissions/EntityShareStore';
+import EntityShareState from 'logic/permissions/EntityShareState';
+import { EntityShareActions } from 'stores/permissions/EntityShareStore';
 import { type EntitySharePayload } from 'actions/permissions/EntityShareActions';
 import BootstrapModalConfirm from 'components/bootstrap/BootstrapModalConfirm';
 
@@ -21,18 +22,18 @@ type Props = {
 };
 
 const EntityShareModal = ({ description, entityId, entityType, entityTitle, onClose }: Props) => {
-  const { state: entityShareState } = useStore(EntityShareStore);
+  const [entityShareState, setEntityShareState] = useState<?EntityShareState>();
   const [disableSubmit, setDisableSubmit] = useState(false);
   const entityGRN = createGRN(entityId, entityType);
 
   useEffect(() => {
-    EntityShareActions.prepare(entityGRN);
+    EntityShareActions.prepare(entityGRN).then(setEntityShareState);
   }, [entityGRN]);
 
   const _handleSave = () => {
     setDisableSubmit(true);
     const payload: EntitySharePayload = {
-      selected_grantee_capabilities: entityShareState.selectedGranteeCapabilities,
+      selected_grantee_capabilities: entityShareState?.selectedGranteeCapabilities ?? Immutable.Map(),
     };
 
     return EntityShareActions.update(entityGRN, payload).then(onClose);
@@ -50,6 +51,7 @@ const EntityShareModal = ({ description, entityId, entityType, entityTitle, onCl
         {entityShareState ? (
           <EntityShareSettings description={description}
                                entityGRN={entityGRN}
+                               setEntityShareState={setEntityShareState}
                                entityShareState={entityShareState}
                                setDisableSubmit={setDisableSubmit} />
         ) : (

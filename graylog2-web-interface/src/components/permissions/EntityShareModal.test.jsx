@@ -8,20 +8,17 @@ import mockEntityShareState, { john, jane, everyone, security, viewer, owner, ma
 import selectEvent from 'react-select-event';
 
 import ActiveShare from 'logic/permissions/ActiveShare';
-import { EntityShareStore, EntityShareActions } from 'stores/permissions/EntityShareStore';
+import { EntityShareActions } from 'stores/permissions/EntityShareStore';
 
 import EntityShareModal from './EntityShareModal';
 
 const mockEmptyStore = { state: undefined };
+const mockPreparePromise = Promise.resolve(mockEntityShareState);
 
 jest.mock('stores/permissions/EntityShareStore', () => ({
   EntityShareActions: {
-    prepare: jest.fn(() => Promise.resolve()),
-    update: jest.fn(() => Promise.resolve()),
-  },
-  EntityShareStore: {
-    listen: jest.fn(),
-    getInitialState: jest.fn(() => ({ state: mockEntityShareState })),
+    prepare: jest.fn(() => mockPreparePromise),
+    update: jest.fn(() => mockPreparePromise),
   },
 }));
 
@@ -45,8 +42,9 @@ describe('EntityShareModal', () => {
     );
   };
 
-  it('fetches entity share state initially', () => {
+  it('fetches entity share state initially', async () => {
     render(<SimpleEntityShareModal />);
+    await act(() => mockPreparePromise);
 
     expect(EntityShareActions.prepare).toBeCalledTimes(1);
 
@@ -55,6 +53,7 @@ describe('EntityShareModal', () => {
 
   it('updates entity share state on submit', async () => {
     const { getByText } = render(<SimpleEntityShareModal />);
+    await act(() => mockPreparePromise);
 
     const submitButton = getByText('Save');
 
@@ -72,6 +71,7 @@ describe('EntityShareModal', () => {
   it('closes modal on cancel', async () => {
     const onClose = jest.fn();
     const { getByText } = render(<SimpleEntityShareModal onClose={onClose} />);
+    await act(() => mockPreparePromise);
 
     const cancelButton = getByText('Discard changes');
 
@@ -83,35 +83,40 @@ describe('EntityShareModal', () => {
   });
 
   describe('displays', () => {
-    it('loading spinner while loading entity share state', () => {
-      asMock(EntityShareStore.getInitialState).mockReturnValueOnce(mockEmptyStore);
+    it('loading spinner while loading entity share state', async () => {
+      asMock(EntityShareActions.prepare).mockReturnValueOnce(mockEmptyStore);
       const { getByText } = render(<SimpleEntityShareModal />);
+      await act(() => mockPreparePromise);
 
       act(() => jest.advanceTimersByTime(200));
 
       expect(getByText('Loading...')).not.toBeNull();
     });
 
-    it('provided description', () => {
+    it('provided description', async () => {
       const { getByText } = render(<SimpleEntityShareModal />);
+      await act(() => mockPreparePromise);
 
       expect(getByText('The description')).not.toBeNull();
     });
 
-    it('provided title', () => {
+    it('provided title', async () => {
       const { getByText } = render(<SimpleEntityShareModal />);
+      await act(() => mockPreparePromise);
 
       expect(getByText('The title')).not.toBeNull();
     });
 
-    it('shareable url', () => {
+    it('shareable url', async () => {
       const { getByDisplayValue } = render(<SimpleEntityShareModal />);
+      await act(() => mockPreparePromise);
 
       expect(getByDisplayValue('http://localhost/')).not.toBeNull();
     });
 
-    it('missing dependecies warning', () => {
+    it('missing dependecies warning', async () => {
       const { getByText } = render(<SimpleEntityShareModal />);
+      await act(() => mockPreparePromise);
 
       expect(getByText('There are missing dependecies for the current set of collaborators')).not.toBeNull();
     });
@@ -121,6 +126,7 @@ describe('EntityShareModal', () => {
     describe('adds new selected grantee', () => {
       const addGrantee = async ({ newGrantee, capability }) => {
         const { getByText, getByLabelText } = render(<SimpleEntityShareModal />);
+        await act(() => mockPreparePromise);
 
         // Select a grantee
         const granteesSelect = getByLabelText('Search for users and teams');
@@ -158,6 +164,7 @@ describe('EntityShareModal', () => {
 
     it('shows validation error', async () => {
       const { getByText } = render(<SimpleEntityShareModal />);
+      await act(() => mockPreparePromise);
 
       const submitButton = getByText('Add Collaborator');
 
@@ -168,9 +175,10 @@ describe('EntityShareModal', () => {
   });
 
   describe('selected grantees list', () => {
-    it('lists grantees', () => {
+    it('lists grantees', async () => {
       const ownerTitle = jane.title;
       const { getByText } = render(<SimpleEntityShareModal />);
+      await act(() => mockPreparePromise);
 
       expect(getByText(ownerTitle)).not.toBeNull();
     });
@@ -178,6 +186,7 @@ describe('EntityShareModal', () => {
     it('allows updating the capability of a grantee', async () => {
       const ownerTitle = jane.title;
       const { getByLabelText } = render(<SimpleEntityShareModal />);
+      await act(() => mockPreparePromise);
 
       const capabilitySelect = getByLabelText(`Change the capability for ${ownerTitle}`);
 
@@ -194,7 +203,7 @@ describe('EntityShareModal', () => {
       });
     });
 
-    describe('allows deleting a grantee', () => {
+    describe.only('allows deleting a grantee', () => {
       // active shares
       const janeIsOwner = ActiveShare
         .builder()
@@ -225,13 +234,15 @@ describe('EntityShareModal', () => {
         .activeShares(activeShares)
         .selectedGranteeCapabilities(selectedGranteeCapabilities)
         .build();
+      const mockNewPreparePromise = Promise.resolve(enitityShareState);
 
       beforeEach(() => {
-        asMock(EntityShareStore.getInitialState).mockReturnValueOnce({ state: enitityShareState });
+        asMock(EntityShareActions.prepare).mockReturnValueOnce(mockNewPreparePromise);
       });
 
       const deleteGrantee = async ({ grantee }) => {
         const { getByTitle } = render(<SimpleEntityShareModal />);
+        await act(() => mockNewPreparePromise);
 
         const deleteButton = getByTitle(`Remove sharing for ${grantee.title}`);
 

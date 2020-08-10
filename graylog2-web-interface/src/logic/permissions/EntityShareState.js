@@ -103,7 +103,6 @@ export default class EntityShareState {
 
   get selectedGrantees() {
     const _userLookup = (userId: GRN) => this._value.availableGrantees.find((grantee) => grantee.id === userId);
-
     const granteesWithCapabilities: Immutable.List<SelectedGrantee> = this._value.selectedGranteeCapabilities.entrySeq().map(([granteeId, roleId]) => {
       const grantee = _userLookup(granteeId);
 
