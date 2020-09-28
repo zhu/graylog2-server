@@ -5,6 +5,7 @@ import breakpoints, { breakpointPropTypes } from './breakpoints';
 import colors, { colorsPropTypes } from './colors';
 import fonts, { fontsPropTypes } from './fonts';
 import utils, { utilsPropTypes } from './utils';
+import zIndices, { zIndicesPropTypes } from './zIndices';
 import type { ThemeInterface } from './types';
 
 const themePropTypes = PropTypes.shape({
@@ -12,6 +13,7 @@ const themePropTypes = PropTypes.shape({
   colors: colorsPropTypes,
   fonts: fontsPropTypes,
   utils: utilsPropTypes,
+  zIndices: zIndicesPropTypes,
 });
 
 export {
@@ -19,6 +21,7 @@ export {
   colors,
   fonts,
   utils,
+  zIndices,
   themePropTypes,
 };
 
