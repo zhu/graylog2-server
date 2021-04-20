@@ -15,11 +15,11 @@
  * <http://www.mongodb.com/licensing/server-side-public-license>.
  */
 import * as React from 'react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import * as Immutable from 'immutable';
 import PropTypes from 'prop-types';
 import styled, { css } from 'styled-components';
-import throttle from 'lodash/throttle';
+import { SizeMe } from 'react-sizeme';
 
 import { Col, Row, Nav, NavItem, MenuItem } from 'components/graylog';
 import { ModifiedNavDropdown as NavDropdown } from 'components/graylog/NavDropdown';
@@ -29,6 +29,7 @@ import QueryTitleEditModal from 'views/components/queries/QueryTitleEditModal';
 import Query, { QueryId } from 'views/logic/queries/Query';
 import type { TitlesMap } from 'views/stores/TitleTypes';
 import ViewState from 'views/logic/views/ViewState';
+import QueryDashboardTab from 'views/components/queries/QueryDashboardTab';
 
 type Props = {
   onRemove: (queryId: string) => Promise<void> | Promise<ViewState>,
@@ -39,9 +40,9 @@ type Props = {
   titles: Immutable.Map<string, string>,
 };
 
-const CLASS_HIDDEN = 'hidden';
-const CLASS_ACTIVE = 'active';
-const CLASS_LOCKED = 'locked';
+// const CLASS_HIDDEN = 'hidden';
+// const CLASS_ACTIVE = 'active';
+// const CLASS_LOCKED = 'locked';
 
 const StyledRow = styled(Row)`
   margin-bottom: 0;
@@ -103,70 +104,73 @@ const StyledQueryNav = styled(Nav)(({ theme }) => css`
   }
 `);
 
-const adjustTabs = () => {
-  const dashboardTabs = document.querySelector('#dashboard-tabs') as HTMLElement;
-  const allTabs = dashboardTabs.querySelectorAll('li');
-  const tabItems = dashboardTabs.querySelectorAll(':scope > li:not(.dropdown):not(.query-tabs-new)');
-  const moreItems = dashboardTabs.querySelectorAll('li.dropdown .dropdown-menu li');
-  const lockedItems = dashboardTabs.querySelectorAll(`li.${CLASS_LOCKED}`);
-  const moreBtn = dashboardTabs.querySelector('li.query-tabs-more') as HTMLElement;
-  const newBtn = dashboardTabs.querySelector('li.query-tabs-new') as HTMLElement;
-  const primaryWidth = dashboardTabs.offsetWidth;
-  const hiddenItems = [];
-
-  let maxWidth = moreBtn.offsetWidth + newBtn.offsetWidth; // magic number is PageContentLayout__Container padding
-
-  if (lockedItems.length) {
-    lockedItems.forEach((tabItem: HTMLElement) => {
-      maxWidth += tabItem.offsetWidth;
-    });
-  }
-
-  allTabs.forEach((tabItem) => {
-    tabItem.classList.remove(CLASS_HIDDEN);
-  });
-
-  tabItems.forEach((tabItem: HTMLElement, idx) => {
-    if (!tabItem.classList.contains(CLASS_LOCKED)) {
-      maxWidth += tabItem.offsetWidth;
-      tabItem.classList.remove(CLASS_HIDDEN);
-
-      if (primaryWidth >= maxWidth) {
-        hiddenItems.splice(idx, 1);
-      } else {
-        tabItem.classList.add(CLASS_HIDDEN);
-        hiddenItems.push(idx);
-      }
-    }
-  });
-
-  moreItems.forEach((tabItem: HTMLElement, idx) => {
-    if (!hiddenItems.includes(idx)) {
-      tabItem.classList.add(CLASS_HIDDEN);
-    }
-
-    if (!tabItem.classList.contains(CLASS_HIDDEN) && tabItem.classList.contains(CLASS_ACTIVE)) {
-      const topTabItem = tabItems[idx] as HTMLElement;
-      const parent = moreBtn.parentNode;
-
-      topTabItem.classList.add(CLASS_LOCKED);
-      topTabItem.classList.remove(CLASS_HIDDEN);
-      tabItem.classList.add(CLASS_HIDDEN);
-
-      parent.insertBefore(moreBtn, topTabItem);
-
-      adjustTabs();
-    }
-  });
-
-  if (!hiddenItems.length) {
-    moreBtn.classList.add(CLASS_HIDDEN);
-  }
-};
+// const adjustTabs = () => {
+//   const dashboardTabs = document.querySelector('#dashboard-tabs') as HTMLElement;
+//   const allTabs = dashboardTabs.querySelectorAll('li');
+//   const tabItems = dashboardTabs.querySelectorAll(':scope > li:not(.dropdown):not(.query-tabs-new)');
+//   const moreItems = dashboardTabs.querySelectorAll('li.dropdown .dropdown-menu li');
+//   const lockedItems = dashboardTabs.querySelectorAll(`li.${CLASS_LOCKED}`);
+//   const moreBtn = dashboardTabs.querySelector('li.query-tabs-more') as HTMLElement;
+//   const newBtn = dashboardTabs.querySelector('li.query-tabs-new') as HTMLElement;
+//   const primaryWidth = dashboardTabs.offsetWidth;
+//   const hiddenItems = [];
+//
+//   let maxWidth = moreBtn.offsetWidth + newBtn.offsetWidth; // magic number is PageContentLayout__Container padding
+//
+//   if (lockedItems.length) {
+//     lockedItems.forEach((tabItem: HTMLElement) => {
+//       maxWidth += tabItem.offsetWidth;
+//     });
+//   }
+//
+//   allTabs.forEach((tabItem) => {
+//     tabItem.classList.remove(CLASS_HIDDEN);
+//   });
+//
+//   tabItems.forEach((tabItem: HTMLElement, idx) => {
+//     if (!tabItem.classList.contains(CLASS_LOCKED)) {
+//       maxWidth += tabItem.offsetWidth;
+//       tabItem.classList.remove(CLASS_HIDDEN);
+//
+//       if (primaryWidth >= maxWidth) {
+//         hiddenItems.splice(idx, 1);
+//       } else {
+//         tabItem.classList.add(CLASS_HIDDEN);
+//         hiddenItems.push(idx);
+//       }
+//     }
+//   });
+//
+//   moreItems.forEach((tabItem: HTMLElement, idx) => {
+//     if (!hiddenItems.includes(idx)) {
+//       tabItem.classList.add(CLASS_HIDDEN);
+//     }
+//
+//     if (!tabItem.classList.contains(CLASS_HIDDEN) && tabItem.classList.contains(CLASS_ACTIVE)) {
+//       const topTabItem = tabItems[idx] as HTMLElement;
+//       const parent = moreBtn.parentNode;
+//
+//       topTabItem.classList.add(CLASS_LOCKED);
+//       topTabItem.classList.remove(CLASS_HIDDEN);
+//       tabItem.classList.add(CLASS_HIDDEN);
+//
+//       parent.insertBefore(moreBtn, topTabItem);
+//
+//       adjustTabs();
+//     }
+//   });
+//
+//   if (!hiddenItems.length) {
+//     moreBtn.classList.add(CLASS_HIDDEN);
+//   }
+// };
 
 const QueryTabs = ({ onRemove, onSelect, onTitleChange, queries, selectedQueryId, titles }:Props) => {
   const queryTitleEditModal = useRef<QueryTitleEditModal | undefined | null>();
   const [openedMore, setOpenedMore] = useState<boolean>(false);
+  const [hiddenTabs, setHiddenTabs] = useState<Array<React.ReactNode>>([]);
+  const maxWidth = useRef<number>(0);
+  const currentWidth = useRef<number>(0);
 
   const openTitleEditModal = (activeQueryTitle: string) => {
     if (queryTitleEditModal) {
@@ -181,15 +185,21 @@ const QueryTabs = ({ onRemove, onSelect, onTitleChange, queries, selectedQueryId
                   id={id}
                   onClose={() => onRemove(id)}
                   openEditModal={openTitleEditModal}
+                  key={`menutitle-${id}`}
                   title={title} />
     );
 
     const output = {
-      navItem: <NavItem eventKey={id} key={id} onClick={() => onSelect(id)}>{tabTitle}</NavItem>,
-      menuItem: <MenuItem eventKey={id} key={id} onClick={() => onSelect(id)}>{tabTitle}</MenuItem>,
+      menuItem: <MenuItem eventKey={`menu-${id}`} key={id} onClick={() => onSelect(id)}>{tabTitle}</MenuItem>,
     };
 
-    return output[itemType];
+    return (
+      <SizeMe>
+        {() => {
+          return output[itemType];
+        }}
+      </SizeMe>
+    );
   });
 
   const newTab = (
@@ -201,35 +211,63 @@ const QueryTabs = ({ onRemove, onSelect, onTitleChange, queries, selectedQueryId
     </NavItem>
   );
 
-  const dropDownTabs = queryTabs('menuItem');
+  const onTabSize = (id) => (size) => {
+    currentWidth.current += size.width;
 
-  useEffect(() => {
-    adjustTabs();
-    window.addEventListener('resize', throttle(adjustTabs, 250));
-
-    return () => {
-      window.removeEventListener('resize', throttle(adjustTabs, 250));
-    };
-  });
+    if (currentWidth.current > maxWidth.current) {
+      setHiddenTabs([...hiddenTabs, id]);
+    }
+  };
 
   return (
     <StyledRow>
       <Col>
-        <StyledQueryNav bsStyle="tabs" activeKey={selectedQueryId} id="dashboard-tabs">
-          {queryTabs('navItem')}
-          <NavDropdown eventKey="more"
-                       title={<Icon name="ellipsis-h" />}
-                       className="query-tabs-more"
-                       id="query-tabs-more"
-                       noCaret
-                       pullRight
-                       active={openedMore}
-                       open={openedMore}
-                       onToggle={(isOpened) => setOpenedMore(isOpened)}>
-            {dropDownTabs}
-          </NavDropdown>
-          {newTab}
-        </StyledQueryNav>
+        <SizeMe>
+          {(wrapperSize) => {
+            maxWidth.current = wrapperSize.size.width;
+
+            return (
+              <StyledQueryNav bsStyle="tabs" activeKey={selectedQueryId} id="dashboard-tabs">
+
+                {queries.map((id, index) => {
+                  const title = titles.get(id, `Page#${index + 1}`);
+                  const tabTitle = (
+                    <QueryTitle active={id === selectedQueryId}
+                                id={id}
+                                onClose={() => onRemove(id)}
+                                openEditModal={openTitleEditModal}
+                                key={`navtitle-${id}`}
+                                title={title} />
+                  );
+
+                  if (hiddenTabs.includes(id)) { return null; }
+
+                  return (
+                    <QueryDashboardTab key={`nav-${id}`}
+                                       id={id}
+                                       onSelect={onSelect}
+                                       tabTitle={tabTitle}
+                                       onSize={onTabSize(id)} />
+                  );
+                })}
+
+                <NavDropdown eventKey="more"
+                             title={<Icon name="ellipsis-h" />}
+                             className="query-tabs-more"
+                             id="query-tabs-more"
+                             noCaret
+                             pullRight
+                             active={openedMore}
+                             open={openedMore}
+                             onToggle={(isOpened) => setOpenedMore(isOpened)}>
+                  {queryTabs('menuItem')}
+                </NavDropdown>
+
+                {newTab}
+              </StyledQueryNav>
+            );
+          }}
+        </SizeMe>
 
         {/*
           The title edit modal can't be part of the QueryTitle component,
