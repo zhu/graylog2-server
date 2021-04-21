@@ -47,7 +47,7 @@ const checkboxProps = (value) => {
 };
 
 const inputProps = (value) => {
-  return { value: value ?? '' };
+  return { defaultValue: value ?? '' };
 };
 
 /** Wraps the common Input component with a formik Field */
@@ -65,14 +65,17 @@ const FormikInput = ({ name, type, help, validate, onChange: propagateOnChange, 
           if (typeof propagateOnChange === 'function') {
             propagateOnChange(e);
           }
+        };
 
+        const _onBlur = (e) => {
           onChange(e);
+          onBlur(e);
         };
 
         return (
           <Input {...rest}
                  {...typeSpecificProps}
-                 onBlur={onBlur}
+                 onBlur={_onBlur}
                  help={help}
                  id={name}
                  error={error}
