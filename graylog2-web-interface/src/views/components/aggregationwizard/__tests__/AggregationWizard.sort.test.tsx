@@ -21,6 +21,7 @@ import selectEvent from 'react-select-event';
 import userEvent from '@testing-library/user-event';
 import { PluginRegistration, PluginStore } from 'graylog-web-plugin/plugin';
 
+import Series from 'views/logic/aggregationbuilder/Series';
 import Direction from 'views/logic/aggregationbuilder/Direction';
 import SortConfig from 'views/logic/aggregationbuilder/SortConfig';
 import FieldTypeMapping from 'views/logic/fieldtypes/FieldTypeMapping';
@@ -30,6 +31,7 @@ import FieldTypesContext from 'views/components/contexts/FieldTypesContext';
 import FieldType from 'views/logic/fieldtypes/FieldType';
 import dataTable from 'views/components/datatable/bindings';
 import Pivot from 'views/logic/aggregationbuilder/Pivot';
+import SeriesConfig from 'views/logic/aggregationbuilder/SeriesConfig';
 
 import AggregationWizard from '../AggregationWizard';
 
@@ -237,6 +239,36 @@ describe('AggregationWizard', () => {
     const updatedConfig = widgetConfig
       .toBuilder()
       .sort([])
+      .build();
+
+    await waitFor(() => expect(onChangeMock).toHaveBeenCalledTimes(1));
+
+    expect(onChangeMock).toHaveBeenCalledWith(updatedConfig);
+  });
+
+  it('keep selected sort, when naming related metric', async () => {
+    const onChangeMock = jest.fn();
+    const series = Series.create('count');
+    const config = widgetConfig
+      .toBuilder()
+      .sort([new SortConfig('series', 'count()', Direction.Ascending)])
+      .series([series])
+      .build();
+
+    renderSUT({ config, onChange: onChangeMock });
+
+    const metricNameInput = await screen.findByLabelText('Name');
+    userEvent.type(metricNameInput, 'New metric name');
+
+    const applyButton = await screen.findByRole('button', { name: 'Apply Changes' });
+    userEvent.click(applyButton);
+
+    const updatedSeries = series
+      .toBuilder()
+      .config(SeriesConfig.empty().toBuilder().name('New metric name').build())
+      .build();
+    const updatedConfig = config.toBuilder()
+      .series([updatedSeries])
       .build();
 
     await waitFor(() => expect(onChangeMock).toHaveBeenCalledTimes(1));
