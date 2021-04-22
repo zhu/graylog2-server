@@ -108,21 +108,31 @@ const StyledQueryNav = styled(Nav)(({ theme }) => css`
 const adjustTabs = (maxWidth: number, setHiddenTabs, lockedTab: number) => {
   const dashboardTabs = document.querySelector('#dashboard-tabs') as HTMLElement;
 
+  console.log({ dashboardTabs, maxWidth });
+
   if (dashboardTabs) {
-    const tabItems = dashboardTabs.querySelectorAll(':scope > li:not(.dropdown):not(.query-tabs-new)') as NodeListOf<HTMLElement>;
+    const tabItems = dashboardTabs.querySelectorAll(':scope > li:not(.dropdown):not(.query-tabs-new):not(.locked)') as NodeListOf<HTMLElement>;
     const lockedItem = dashboardTabs.querySelector('li.locked') as HTMLElement;
     const moreBtn = dashboardTabs.querySelector('li.query-tabs-more') as HTMLElement;
     const newBtn = dashboardTabs.querySelector('li.query-tabs-new') as HTMLElement;
-    const hiddenItems = new Set();
+    const hiddenItems = new Set<number>();
+
+    console.log({ tabItems, lockedItem, moreBtn, newBtn });
+
+    if (lockedItem) {
+      lockedItem.classList.remove('hidden');
+    }
 
     let currentWidth = (moreBtn?.offsetWidth ?? 0) + (newBtn?.offsetWidth ?? 0) + (lockedItem?.offsetWidth ?? 0);
 
     tabItems.forEach((tabItem: HTMLElement, idx) => {
+      tabItem.classList.remove('hidden');
       currentWidth += tabItem.offsetWidth;
 
-      console.log({ maxWidth, currentWidth });
+      console.log(idx, { maxWidth, currentWidth, tabWidth: tabItem.offsetWidth, classList: tabItem.classList });
 
-      if (currentWidth >= maxWidth || lockedTab === idx) {
+      if (currentWidth >= maxWidth || idx === lockedTab) {
+        tabItem.classList.add('hidden');
         hiddenItems.add(idx);
       }
     });
@@ -137,6 +147,7 @@ const QueryTabs = ({ onRemove, onSelect, onTitleChange, queries, selectedQueryId
   const queryTitleEditModal = useRef<QueryTitleEditModal | undefined | null>();
   const [openedMore, setOpenedMore] = useState<boolean>(false);
   const maxWidth = useRef<number>(0);
+  const [dashboardTabs, setDashboardTabs] = useState<QueryTabItems>({ navItems: [], menuItems: [], lockedItem: null });
   const [lockedTab, setLockedTab] = useState<number>(undefined);
   const [hiddenTabs, setHiddenTabs] = useState<Set<number>>(new Set());
 
@@ -146,7 +157,7 @@ const QueryTabs = ({ onRemove, onSelect, onTitleChange, queries, selectedQueryId
     }
   };
 
-  const queryTabs = React.useMemo<QueryTabItems>(() => {
+  const queryTabs = React.useCallback((): QueryTabItems => {
     const navItems = [];
     const menuItems = [];
     let lockedItem = null;
@@ -177,7 +188,7 @@ const QueryTabs = ({ onRemove, onSelect, onTitleChange, queries, selectedQueryId
       const navItem = (
         <NavItem eventKey={`nav-${id}`}
                  key={`nav-${id}`}
-                 className={`${(hiddenTabs.has(index) || isLocked) ? 'hidden' : ''} ${isActive && 'active'}`}
+                 className={`${isActive ? 'active' : ''}`}
                  onClick={() => {
                    setLockedTab(undefined);
                    onSelect(id);
@@ -189,7 +200,7 @@ const QueryTabs = ({ onRemove, onSelect, onTitleChange, queries, selectedQueryId
       const menuItem = (
         <MenuItem eventKey={`menu-${id}`}
                   key={`menu-${id}`}
-                  className={`${(hiddenTabs.has(index) && !isLocked) ? '' : 'hidden'}`}
+                  className={`${hiddenTabs.has(index) ? '' : 'hidden'}`}
                   onClick={() => {
                     setLockedTab(index);
                     onSelect(id);
@@ -203,7 +214,7 @@ const QueryTabs = ({ onRemove, onSelect, onTitleChange, queries, selectedQueryId
     });
 
     return { navItems, menuItems, lockedItem };
-  }, [lockedTab, hiddenTabs, onRemove, onSelect, queries, selectedQueryId, titles]);
+  }, [hiddenTabs, lockedTab, onRemove, onSelect, queries, selectedQueryId, titles]);
 
   const newTab = (
     <NavItem key="new"
@@ -214,6 +225,21 @@ const QueryTabs = ({ onRemove, onSelect, onTitleChange, queries, selectedQueryId
     </NavItem>
   );
 
+  const _adjustTabs = () => {
+    setDashboardTabs(queryTabs());
+    adjustTabs(maxWidth.current, setHiddenTabs, lockedTab);
+  };
+
+  React.useEffect(() => {
+    setTimeout(() => {
+      requestAnimationFrame(_adjustTabs);
+    });
+  }, [lockedTab, selectedQueryId]);
+
+  React.useEffect(() => {
+    setDashboardTabs(queryTabs());
+  }, [queryTabs, hiddenTabs]);
+
   return (
     <StyledRow>
       <Col>
@@ -221,7 +247,6 @@ const QueryTabs = ({ onRemove, onSelect, onTitleChange, queries, selectedQueryId
           {({ size }) => {
             if (size.width !== maxWidth.current) {
               maxWidth.current = size.width;
-              adjustTabs(size.width, setHiddenTabs, lockedTab);
             }
 
             return (
@@ -230,8 +255,8 @@ const QueryTabs = ({ onRemove, onSelect, onTitleChange, queries, selectedQueryId
                               id="dashboard-tabs"
                               key="dashboard-tabs">
 
-                {queryTabs.navItems}
-                {queryTabs.menuItems.length
+                {dashboardTabs.navItems}
+                {dashboardTabs.menuItems.length
                 && (
                 <NavDropdown eventKey="more"
                              title={<Icon name="ellipsis-h" />}
@@ -242,11 +267,11 @@ const QueryTabs = ({ onRemove, onSelect, onTitleChange, queries, selectedQueryId
                              active={openedMore}
                              open={openedMore}
                              onToggle={(isOpened) => setOpenedMore(isOpened)}>
-                  {queryTabs.menuItems}
+                  {dashboardTabs.menuItems}
                 </NavDropdown>
                 )}
 
-                {typeof lockedTab !== 'undefined' && queryTabs.lockedItem}
+                {typeof lockedTab !== 'undefined' && dashboardTabs.lockedItem}
 
                 {newTab}
               </StyledQueryNav>
