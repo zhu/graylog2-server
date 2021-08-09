@@ -81,6 +81,11 @@ export default class ParameterBinding {
 
     return ParameterBinding.create(type, value);
   }
+
+  static builder(): Builder {
+    // eslint-disable-next-line @typescript-eslint/no-use-before-define
+    return new Builder();
+  }
 }
 
 class Builder {
