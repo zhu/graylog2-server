@@ -16,7 +16,7 @@
  */
 import * as React from 'react';
 import PropTypes from 'prop-types';
-import { DefaultTheme, withTheme } from 'styled-components';
+import styled, { DefaultTheme, withTheme } from 'styled-components';
 import { merge } from 'lodash';
 import { Overlay, RootCloseWrapper } from 'react-overlays';
 
@@ -32,6 +32,12 @@ import styles from './GenericPlot.lazy.css';
 
 import InteractiveContext from '../contexts/InteractiveContext';
 import RenderCompletionCallback from '../widgets/RenderCompletionCallback';
+
+const StyledPlot = styled(Plot)`
+  .plotly .main-svg {
+    overflow: visible;
+  }
+`;
 
 type LegendConfig = {
   name: string,
@@ -248,15 +254,15 @@ class GenericPlot extends React.Component<GenericPlotProps, State> {
                 <RenderCompletionCallback.Consumer>
                   {(onRenderComplete) => (
                     <>
-                      <Plot data={newChartData}
-                            useResizeHandler
-                            layout={interactive ? plotLayout : merge({}, nonInteractiveLayout, plotLayout)}
-                            style={style}
-                            onAfterPlot={onRenderComplete}
-                            onClick={interactive ? null : () => false}
-                            onLegendClick={interactive ? this._onLegendClick : () => false}
-                            onRelayout={interactive ? this._onRelayout : () => false}
-                            config={config} />
+                      <StyledPlot data={newChartData}
+                                  useResizeHandler
+                                  layout={interactive ? plotLayout : merge({}, nonInteractiveLayout, plotLayout)}
+                                  style={style}
+                                  onAfterPlot={onRenderComplete}
+                                  onClick={interactive ? null : () => false}
+                                  onLegendClick={interactive ? this._onLegendClick : () => false}
+                                  onRelayout={interactive ? this._onRelayout : () => false}
+                                  config={config} />
                       {legendConfig && (
                         <RootCloseWrapper event="mousedown"
                                           onRootClose={this._onCloseColorPopup}>

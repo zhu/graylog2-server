@@ -38,6 +38,8 @@ const Wrapper = styled.div(({ theme }) => css`
   font-size: ${theme.fonts.size.tiny};
   color: ${theme.colors.gray[30]};
   width: max-content;
+  background-color: ${theme.colors.global.contentBackground};
+  z-index: 1;
 `);
 
 const getEffectiveWidgetTimerange = (result, activeQuery, searchTypeId) => result?.results[activeQuery]
