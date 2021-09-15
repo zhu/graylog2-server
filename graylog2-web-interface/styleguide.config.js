@@ -25,6 +25,7 @@ module.exports = {
     'toastr/toastr.less',
     'stylesheets/typeahead.less',
     'injection/builtins.js',
+    'regenerator-runtime/runtime',
   ],
   sections: [
     {
