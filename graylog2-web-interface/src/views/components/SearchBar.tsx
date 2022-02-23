@@ -52,6 +52,7 @@ import useParameters from 'views/hooks/useParameters';
 import debounceWithPromise from 'views/logic/debounceWithPromise';
 import validateQuery from 'views/components/searchbar/queryvalidation/validateQuery';
 
+import PluggableSearchBarElements from './searchbar/PluggableSearchBarElements';
 import SearchBarForm from './searchbar/SearchBarForm';
 
 type Props = {
@@ -152,6 +153,7 @@ const SearchBar = ({
 
                   return (
                     <>
+                      <PluggableSearchBarElements />
                       <TopRow>
                         <Col md={5}>
                           <TimeRangeInput disabled={disableSearch}
