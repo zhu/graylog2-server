@@ -30,6 +30,7 @@ import DocsHelper from 'util/DocsHelper';
 import QueryValidationActions from 'views/actions/QueryValidationActions';
 import FormWarningsContext from 'contexts/FormWarningsContext';
 import type { QueryValidationState } from 'views/components/searchbar/queryvalidation/types';
+import usePluginEntities from 'views/logic/usePluginEntities';
 
 const Container = styled.div`
   margin-right: 5px;
@@ -148,18 +149,21 @@ const useTriggerIfErrorsPersist = (trigger: () => void) => {
 
 const getErrorDocumentationLink = (errorType: string) => {
   switch (errorType) {
-    case 'Unknown field':
+    case 'UNKNOWN_FIELD':
       return DocsHelper.PAGES.SEARCH_QUERY_ERRORS.UNKNOWN_FIELD;
-    case 'ParseException':
+    case 'PARSE_EXCEPTION':
       return DocsHelper.PAGES.SEARCH_QUERY_ERRORS.PARSE_EXCEPTION;
-    case 'Invalid operator':
+    case 'INVALID_OPERATOR':
       return DocsHelper.PAGES.SEARCH_QUERY_ERRORS.INVALID_OPERATOR;
+    case 'UNDECLARED_PARAMETER':
+      return DocsHelper.PAGES.SEARCH_QUERY_ERRORS.UNDECLARED_PARAMETER;
     default:
       return DocsHelper.PAGES.SEARCH_QUERY_LANGUAGE;
   }
 };
 
 const QueryValidation = () => {
+  const plugableValidationExplanation = usePluginEntities('views.elements.validationErrorExplanation');
   const [shakingPopover, shake] = useShakeTemporarily();
   const [showExplanation, toggleShow] = useTriggerIfErrorsPersist(shake);
 
@@ -201,25 +205,24 @@ const QueryValidation = () => {
                          title={<ExplanationTitle title={StringUtils.capitalizeFirstLetter(status.toLocaleLowerCase())} />}
                          $shaking={shakingPopover}>
             <div role="alert">
-              {explanations.map(({ errorType, errorMessage }) => (
+              {explanations.map(({ errorType, errorTitle, errorMessage }) => (
                 <Explanation key={errorMessage}>
-                  <span><b>{errorType}</b>: {errorMessage}</span>
+                  <span><b>{errorTitle}</b>: {errorMessage}</span>
                   <DocumentationLink page={getErrorDocumentationLink(errorType)}
-                                     title={`${errorType} documentation`}
+                                     title={`${errorTitle} documentation`}
                                      text={<DocumentationIcon name="lightbulb" />} />
                 </Explanation>
               ))}
+              {plugableValidationExplanation?.map((PlugableExplanation, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <PlugableExplanation validationState={validationState} key={index} />),
+              )}
             </div>
           </StyledPopover>
         </Overlay>
       )}
     </>
   );
-};
-
-QueryValidation.defaultProps = {
-  filter: undefined,
-  streams: undefined,
 };
 
 export default QueryValidation;
