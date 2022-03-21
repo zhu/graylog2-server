@@ -46,7 +46,7 @@ type FilterPropsProps = {
 };
 
 type ActionDropdownProps = {
-  children: React.ReactElement,
+  children: React.ReactNode,
   container?: HTMLElement,
   element: React.ReactNode,
 };
@@ -85,13 +85,17 @@ ActionToggle.defaultProps = {
   bsRole: undefined,
 };
 
-const FilterProps = ({ children, style }: FilterPropsProps) => {
-  const mappedChildren = React.Children.map(
-    children,
-    (child) => React.cloneElement(child, { style: { ...style, ...child.props.style } }),
-  );
+const FilterProps = ({ children, style }: FilterPropsProps) => (
+  <>
+    {React.Children.map(
+      children,
+      (child) => React.cloneElement(child, { style: { ...style, ...child.props.style } }),
+    )}
+  </>
+);
 
-  return <>{mappedChildren}</>;
+FilterProps.defaultProps = {
+  style: {},
 };
 
 class ActionDropdown extends React.Component<ActionDropdownProps, ActionDropdownState> {
@@ -154,7 +158,7 @@ class ActionDropdown extends React.Component<ActionDropdownProps, ActionDropdown
         ...this.closeOnChildSelect(child, updateDepth + 1),
       }) : child),
     );
-  }
+  };
 
   render() {
     const { children, container, element } = this.props;

@@ -16,7 +16,7 @@
  */
 import PropTypes from 'prop-types';
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Immutable from 'immutable';
 import ImmutablePropTypes from 'react-immutable-proptypes';
 
@@ -32,7 +32,7 @@ import type { Message } from 'views/components/messagelist/Types';
 import type { Input } from 'components/messageloaders/Types';
 import type { Stream } from 'views/stores/StreamsStore';
 import CustomPropTypes from 'views/components/CustomPropTypes';
-import type { FieldTypeMappingsList } from 'views/stores/FieldTypesStore';
+import type { FieldTypeMappingsList } from 'views/logic/fieldtypes/types';
 import { useStore } from 'stores/connect';
 import { SearchConfigStore } from 'views/stores/SearchConfigStore';
 import FormatReceivedBy from 'views/components/messagelist/FormatReceivedBy';
@@ -83,6 +83,7 @@ const MessageDetail = ({
   const { fields, index, id, decoration_stats: decorationStats } = message;
   const { gl2_source_node, gl2_source_input } = fields;
   const { isLocalNode } = useIsLocalNode(gl2_source_node);
+  const additionalContext = useMemo(() => ({ isLocalNode }), [isLocalNode]);
 
   const _toggleShowOriginal = () => {
     setShowOriginal(!showOriginal);
@@ -101,7 +102,6 @@ const MessageDetail = ({
 
   const streamIds = Immutable.Set(fields.streams as Array<string>);
   const streamsListItems = streamIds.map((streamId) => {
-    // eslint-disable-next-line react/destructuring-assignment
     const stream = streams.get(streamId);
 
     if (stream !== undefined) {
@@ -118,13 +118,13 @@ const MessageDetail = ({
     const rawTimestamp = fields.timestamp;
 
     timestamp.push(<dt key={`dt-${rawTimestamp}`}>Timestamp</dt>);
-    timestamp.push(<dd key={`dd-${rawTimestamp}`}><Timestamp dateTime={rawTimestamp} /></dd>);
+    timestamp.push(<dd key={`dd-${rawTimestamp}`}><Timestamp dateTime={rawTimestamp} format="complete" /></dd>);
   }
 
   const messageTitle = _formatMessageTitle(index, id);
 
   return (
-    <AdditionalContext.Provider value={{ isLocalNode }}>
+    <AdditionalContext.Provider value={additionalContext}>
       <MessageDetailProviders message={message}>
         <>
           <Row className="row-sm">

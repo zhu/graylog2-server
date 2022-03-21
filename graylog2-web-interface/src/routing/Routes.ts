@@ -60,6 +60,7 @@ const Routes = {
       show: (notificationId: string) => `/alerts/notifications/${notificationId}`,
     },
   },
+  SECURITY: '/security',
   SOURCES: '/sources',
   DASHBOARDS: '/dashboards',
   GETTING_STARTED: '/gettingstarted',
@@ -69,7 +70,7 @@ const Routes = {
       LIST: '/system/contentpacks',
       EXPORT: '/system/contentpacks/export',
       CREATE: '/system/contentpacks/create',
-      edit: (contentPackId: string, contentPackRev: string) => { return `/system/contentpacks/${contentPackId}/${contentPackRev}/edit`; },
+      edit: (contentPackId: string, contentPackRev: string) => `/system/contentpacks/${contentPackId}/${contentPackRev}/edit`,
       show: (contentPackId: string) => `/system/contentpacks/${contentPackId}`,
     },
     GROKPATTERNS: '/system/grokpatterns',
@@ -336,6 +337,13 @@ const pluginRoute = (routeKey, throwError = true) => {
 };
 
 const getPluginRoute = (routeKey) => pluginRoute(routeKey, false);
+
+/**
+ * Exported constants for using strings to check if a plugin is registered by it's description.
+ *
+ */
+export const ENTERPRISE_ROUTE_DESCRIPTION = 'Enterprise';
+export const SECURITY_ROUTE_DESCRIPTION = 'Analyst Tools';
 
 const defaultExport = Object.assign(qualifiedRoutes, { pluginRoute, getPluginRoute, unqualified });
 
