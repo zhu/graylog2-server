@@ -89,4 +89,9 @@ public class RunningGraylogBackend implements GraylogBackend {
         return "noop -> because the database server is running, check the logs in the console ;-)";
     }
 
+    @Override
+    public String getSysInfo() {
+        return "noop";
+    }
+
 }

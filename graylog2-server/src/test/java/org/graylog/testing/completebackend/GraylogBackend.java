@@ -43,10 +43,15 @@ public interface GraylogBackend {
 
     String getDbLogs();
 
+    String getSysInfo();
+
     default RestAssuredConfig withGraylogBackendFailureConfig() {
         return RestAssured.config().failureConfig(FailureConfig.failureConfig().with().failureListeners(
                 (reqSpec, respSpec, resp) -> {
                     if (resp.statusCode() >= 400) {
+                        System.out.println("------------------------ System Information start ------------------------------------------");
+                        System.out.println(this.getSysInfo());
+                        System.out.println("------------------------ System Information ends  ------------------------------------------");
                         System.out.println("------------------------ Output from graylog docker container start ------------------------");
                         System.out.println(this.getLogs());
                         System.out.println("------------------------ Output from graylog docker container ends  ------------------------");

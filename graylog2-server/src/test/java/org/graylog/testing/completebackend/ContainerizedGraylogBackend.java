@@ -27,7 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -137,6 +142,48 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
     @Override
     public String getDbLogs() {
         return mongodb.getLogs();
+    }
+
+    @Override
+    public String getSysInfo() {
+        StringBuffer sysInfo = new StringBuffer("");
+        sysInfo.append("Available processors (cores): ").append(Runtime.getRuntime().availableProcessors()).append("\n");
+        sysInfo.append("Free memory (bytes): ").append(Runtime.getRuntime().freeMemory()).append("\n");
+        /* This will return Long.MAX_VALUE if there is no preset limit */
+        long maxMemory = Runtime.getRuntime().maxMemory();
+        sysInfo.append("Maximum memory (bytes): ").append( (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory)).append("\n");
+        sysInfo.append("Total memory available to JVM (bytes): ").append(Runtime.getRuntime().totalMemory()).append("\n");
+
+        /* Get a list of all filesystem roots on this system */
+        File[] roots = File.listRoots();
+
+        /* For each filesystem root, print some info */
+        for (File root : roots) {
+            sysInfo.append("-------------------------------------------\n");
+            sysInfo.append("File system root: ").append(root.getAbsolutePath()).append("\n");
+            sysInfo.append("Total space (bytes): ").append(root.getTotalSpace()).append("\n");
+            sysInfo.append("Free space (bytes): ").append(root.getFreeSpace()).append("\n");
+            sysInfo.append("Usable space (bytes): ").append(root.getUsableSpace()).append("\n");
+        }
+
+        try {
+            sysInfo.append("-------------------------------------------\n");
+
+            Runtime runtime = Runtime.getRuntime();
+            BufferedReader br = new BufferedReader(new InputStreamReader(runtime.exec("cat /proc/loadavg").getInputStream()));
+
+            String avgLine = br.readLine();
+            sysInfo.append(avgLine).append("\n");
+            List<String> avgLineList = Arrays.asList(avgLine.split("\\s+"));
+            sysInfo.append(avgLineList).append("\n");
+            sysInfo.append("Average load 1 minute : ").append(avgLineList.get(0)).append("\n");
+            sysInfo.append("Average load 5 minutes : ").append(avgLineList.get(1)).append("\n");
+            sysInfo.append("Average load 15 minutes : ").append(avgLineList.get(2)).append("\n");
+        } catch (IOException iox) {
+            sysInfo.append("Could not generate System Load: " + iox.getMessage());
+        }
+
+        return sysInfo.toString();
     }
 
     @Override
