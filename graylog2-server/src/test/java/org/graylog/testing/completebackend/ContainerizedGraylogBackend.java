@@ -73,6 +73,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static org.graylog2.shared.utilities.StringUtils.f;
+
 public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseable {
     private static final Logger LOG = LoggerFactory.getLogger(GraylogBackend.class);
     private Network network;
@@ -206,7 +208,7 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
             sysInfo.append("-------------------------------------------\n");
 
             Runtime runtime = Runtime.getRuntime();
-            BufferedReader br = new BufferedReader(new InputStreamReader(runtime.exec("cat /proc/loadavg").getInputStream()));
+            BufferedReader br = new BufferedReader(new InputStreamReader(runtime.exec("cat /proc/loadavg").getInputStream(), "UTF-8"));
 
             String avgLine = br.readLine();
             sysInfo.append(avgLine).append("\n");
@@ -322,20 +324,20 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
         long steal = ticks[TickType.STEAL.getIndex()] - prevTicks[TickType.STEAL.getIndex()];
         long totalCpu = user + nice + sys + idle + iowait + irq + softirq + steal;
 
-        oshi.add(String.format(
+        oshi.add(f(
                 "User: %.1f%% Nice: %.1f%% System: %.1f%% Idle: %.1f%% IOwait: %.1f%% IRQ: %.1f%% SoftIRQ: %.1f%% Steal: %.1f%%",
                 100d * user / totalCpu, 100d * nice / totalCpu, 100d * sys / totalCpu, 100d * idle / totalCpu,
                 100d * iowait / totalCpu, 100d * irq / totalCpu, 100d * softirq / totalCpu, 100d * steal / totalCpu));
-        oshi.add(String.format("CPU load: %.1f%%", processor.getSystemCpuLoadBetweenTicks(prevTicks) * 100));
+        oshi.add(f("CPU load: %.1f%%", processor.getSystemCpuLoadBetweenTicks(prevTicks) * 100));
         double[] loadAverage = processor.getSystemLoadAverage(3);
-        oshi.add("CPU load averages:" + (loadAverage[0] < 0 ? " N/A" : String.format(" %.2f", loadAverage[0]))
-                + (loadAverage[1] < 0 ? " N/A" : String.format(" %.2f", loadAverage[1]))
-                + (loadAverage[2] < 0 ? " N/A" : String.format(" %.2f", loadAverage[2])));
+        oshi.add("CPU load averages:" + (loadAverage[0] < 0 ? " N/A" : f(" %.2f", loadAverage[0]))
+                + (loadAverage[1] < 0 ? " N/A" : f(" %.2f", loadAverage[1]))
+                + (loadAverage[2] < 0 ? " N/A" : f(" %.2f", loadAverage[2])));
         // per core CPU
         StringBuilder procCpu = new StringBuilder("CPU load per processor:");
         double[] load = processor.getProcessorCpuLoadBetweenTicks(prevProcTicks);
         for (double avg : load) {
-            procCpu.append(String.format(" %.1f%%", avg * 100));
+            procCpu.append(f(" %.1f%%", avg * 100));
         }
         oshi.add(procCpu.toString());
         long freq = processor.getProcessorIdentifier().getVendorFreq();
@@ -370,7 +372,7 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
         oshi.add("   PID  %CPU %MEM       VSZ       RSS Name");
         for (int i = 0; i < procs.size() && i < 5; i++) {
             OSProcess p = procs.get(i);
-            oshi.add(String.format(" %5d %5.1f %4.1f %9s %9s %s", p.getProcessID(),
+            oshi.add(f(" %5d %5.1f %4.1f %9s %9s %s", p.getProcessID(),
                     100d * (p.getKernelTime() + p.getUserTime()) / p.getUpTime(),
                     100d * p.getResidentSetSize() / memory.getTotal(), FormatUtil.formatBytes(p.getVirtualSize()),
                     FormatUtil.formatBytes(p.getResidentSetSize()), p.getName()));
@@ -393,13 +395,13 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
         int i = 0;
         for (OSService s : os.getServices()) {
             if (s.getState().equals(OSService.State.RUNNING) && i++ < 5) {
-                oshi.add(String.format(" %5d  %7s  %s", s.getProcessID(), s.getState(), s.getName()));
+                oshi.add(f(" %5d  %7s  %s", s.getProcessID(), s.getState(), s.getName()));
             }
         }
         i = 0;
         for (OSService s : os.getServices()) {
             if (s.getState().equals(OSService.State.STOPPED) && i++ < 5) {
-                oshi.add(String.format(" %5d  %7s  %s", s.getProcessID(), s.getState(), s.getName()));
+                oshi.add(f(" %5d  %7s  %s", s.getProcessID(), s.getState(), s.getName()));
             }
         }
     }
@@ -444,13 +446,13 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
     private static void printFileSystem(FileSystem fileSystem) {
         oshi.add("File System:");
 
-        oshi.add(String.format(" File Descriptors: %d/%d", fileSystem.getOpenFileDescriptors(),
+        oshi.add(f(" File Descriptors: %d/%d", fileSystem.getOpenFileDescriptors(),
                 fileSystem.getMaxFileDescriptors()));
 
         for (OSFileStore fs : fileSystem.getFileStores()) {
             long usable = fs.getUsableSpace();
             long total = fs.getTotalSpace();
-            oshi.add(String.format(
+            oshi.add(f(
                     " %s (%s) [%s] %s of %s free (%.1f%%), %s of %s files free (%.1f%%) is %s "
                             + (fs.getLogicalVolume() != null && fs.getLogicalVolume().length() > 0 ? "[%s]" : "%s")
                             + " and is mounted at %s",
