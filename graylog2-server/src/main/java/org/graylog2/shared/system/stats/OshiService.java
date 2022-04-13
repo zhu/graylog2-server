@@ -31,6 +31,9 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static oshi.util.GlobalConfig.OSHI_NETWORK_FILESYSTEM_TYPES;
+import static oshi.util.GlobalConfig.OSHI_PSEUDO_FILESYSTEM_TYPES;
+
 @Singleton
 public class OshiService {
     private static final Logger LOG = LoggerFactory.getLogger(OshiService.class);
@@ -40,7 +43,7 @@ public class OshiService {
 
     @Inject
     public OshiService() {
-        final ArrayList<String> fsTypes = new ArrayList<>(Arrays.asList(GlobalConfig.get(AbstractFileSystem.OSHI_PSEUDO_FILESYSTEM_TYPES, "").split(",")));
+        final ArrayList<String> fsTypes = new ArrayList<>(Arrays.asList(GlobalConfig.get(OSHI_NETWORK_FILESYSTEM_TYPES, "").split(",")));
         // Add non-default pseudo filesystem type (Docker related)
         // Avoids warnings like: "WARN : oshi.software.os.linux.LinuxFileSystem - Failed to get information to use statvfs. path: /var/lib/docker/aufs/mnt/422edee4370d8e2553292b2a52b2716967fdf8d344b040c3b821615d5d584961, Error code: 13"
         fsTypes.add("aufs");
@@ -55,7 +58,7 @@ public class OshiService {
         // settings. (because the class hasn't been loaded yet) Should the AbstractFileSystem class at
         // some point get loaded earlier, this setting will have no effect. A solution for this would be to
         // create an upstream PR to make OSHI config usage more dynamic.
-        GlobalConfig.set(AbstractFileSystem.OSHI_PSEUDO_FILESYSTEM_TYPES, String.join(",", fsTypes));
+        GlobalConfig.set(OSHI_PSEUDO_FILESYSTEM_TYPES, String.join(",", fsTypes));
 
         SystemInfo systemInfo = new SystemInfo();
         hal = systemInfo.getHardware();
