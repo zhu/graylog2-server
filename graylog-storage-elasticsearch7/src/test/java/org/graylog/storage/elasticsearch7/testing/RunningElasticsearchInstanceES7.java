@@ -92,21 +92,25 @@ public class RunningElasticsearchInstanceES7 implements SearchServerInstance {
 
     @Override
     public GenericContainer<?> createContainer(String image, SearchVersion version, Network network) {
+        // noop -> running instance
         return null;
     }
 
     @Override
     public GenericContainer<?> buildContainer(String image, Network network) {
+        // noop -> running instance
         return null;
     }
 
     @Override
     public String internalUri() {
+        // noop -> running instance
         return null;
     }
 
     @Override
     public SearchVersion version() {
+        // noop -> running instance
         return null;
     }
 
@@ -127,17 +131,23 @@ public class RunningElasticsearchInstanceES7 implements SearchServerInstance {
 
     @Override
     public String getHttpHostAddress() {
+        // noop -> running instance
         return null;
     }
 
     @Override
     public void cleanUp() {
+        // noop -> running instance
+    }
 
+    @Override
+    public String getLogs() {
+        return "noop -> running ES Instance.";
     }
 
     @Override
     public void close() {
-
+        // noop -> running instance
     }
 
     public ElasticsearchClient elasticsearchClient() {

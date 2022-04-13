@@ -44,6 +44,8 @@ public interface SearchServerInstance extends Closeable {
 
     void cleanUp();
 
+    String getLogs();
+
     @Override
     void close();
 }

@@ -78,4 +78,15 @@ public class RunningGraylogBackend implements GraylogBackend {
     public String getLogs() {
         return "noop -> because the server is running, check the logs in the console ;-)";
     }
+
+    @Override
+    public String getSearchLogs() {
+        return "noop -> because the search server is running, check the logs in the console ;-)";
+    }
+
+    @Override
+    public String getDbLogs() {
+        return "noop -> because the database server is running, check the logs in the console ;-)";
+    }
+
 }

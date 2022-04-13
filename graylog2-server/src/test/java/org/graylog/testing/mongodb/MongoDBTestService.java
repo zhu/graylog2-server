@@ -185,4 +185,8 @@ public class MongoDBTestService implements AutoCloseable {
     private static String uriWithHostAndPort(String hostname, int port) {
         return String.format(Locale.US, "mongodb://%s:%d/%s", hostname, port, DEFAULT_DATABASE_NAME);
     }
+
+    public String getLogs() {
+        return this.container.getLogs();
+    }
 }

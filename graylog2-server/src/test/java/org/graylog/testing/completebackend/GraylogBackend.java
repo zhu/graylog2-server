@@ -39,13 +39,23 @@ public interface GraylogBackend {
 
     String getLogs();
 
+    String getSearchLogs();
+
+    String getDbLogs();
+
     default RestAssuredConfig withGraylogBackendFailureConfig() {
         return RestAssured.config().failureConfig(FailureConfig.failureConfig().with().failureListeners(
                 (reqSpec, respSpec, resp) -> {
-                    if (resp.statusCode() >= 500) {
+                    if (resp.statusCode() >= 400) {
                         System.out.println("------------------------ Output from graylog docker container start ------------------------");
                         System.out.println(this.getLogs());
                         System.out.println("------------------------ Output from graylog docker container ends  ------------------------");
+                        System.out.println("------------------------ Output from searchServer docker container start ------------------------");
+                        System.out.println(this.getSearchLogs());
+                        System.out.println("------------------------ Output from searchServer docker container ends  ------------------------");
+                        System.out.println("------------------------ Output from database docker container start ------------------------");
+                        System.out.println(this.getDbLogs());
+                        System.out.println("------------------------ Output from database docker container ends  ------------------------");
                     }
                 })
         );
