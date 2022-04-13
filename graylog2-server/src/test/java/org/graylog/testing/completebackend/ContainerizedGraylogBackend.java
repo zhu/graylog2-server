@@ -234,24 +234,24 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
 
         printOperatingSystem(os);
 
-        printComputerSystem(hal.getComputerSystem());
-        printProcessor(hal.getProcessor());
+//        printComputerSystem(hal.getComputerSystem());
+//        printProcessor(hal.getProcessor());
         printMemory(hal.getMemory());
         printCpu(hal.getProcessor());
-        printProcesses(os, hal.getMemory());
-        printServices(os);
-        printSensors(hal.getSensors());
-        printPowerSources(hal.getPowerSources());
-        printDisks(hal.getDiskStores());
-        printLVgroups(hal.getLogicalVolumeGroups());
-        printFileSystem(os.getFileSystem());
-        printNetworkInterfaces(hal.getNetworkIFs());
-        printNetworkParameters(os.getNetworkParams());
-        printInternetProtocolStats(os.getInternetProtocolStats());
-        printDisplays(hal.getDisplays());
-        printUsbDevices(hal.getUsbDevices(true));
-        printSoundCards(hal.getSoundCards());
-        printGraphicsCards(hal.getGraphicsCards());
+//        printProcesses(os, hal.getMemory());
+//        printServices(os);
+//        printSensors(hal.getSensors());
+//        printPowerSources(hal.getPowerSources());
+//        printDisks(hal.getDiskStores());
+//        printLVgroups(hal.getLogicalVolumeGroups());
+//        printFileSystem(os.getFileSystem());
+//        printNetworkInterfaces(hal.getNetworkIFs());
+//        printNetworkParameters(os.getNetworkParams());
+//        printInternetProtocolStats(os.getInternetProtocolStats());
+//        printDisplays(hal.getDisplays());
+//        printUsbDevices(hal.getUsbDevices(true));
+//        printSoundCards(hal.getSoundCards());
+//        printGraphicsCards(hal.getGraphicsCards());
 
         StringBuilder output = new StringBuilder();
         for (int i = 0; i < oshi.size(); i++) {
