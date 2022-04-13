@@ -222,7 +222,7 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
         }
 
         sysInfo.append("--OSHI Output -----------------------------------------\n");
-        sysInfo.append(oshi).append("\n");
+        sysInfo.append(oshi()).append("\n");
         sysInfo.append("-------------------------------------------\n");
 
         return sysInfo.toString();
