@@ -34,12 +34,11 @@ import org.graylog.storage.elasticsearch7.ElasticsearchClient;
 import org.graylog.storage.elasticsearch7.testing.TestMultisearchResponse;
 import org.graylog.storage.elasticsearch7.views.searchtypes.ESSearchTypeHandler;
 import org.graylog2.plugin.indexer.searches.timeranges.RelativeRange;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -54,30 +53,27 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 public class ElasticsearchBackendErrorHandlingTest {
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
 
     @Mock
     private ElasticsearchClient client;
-
     @Mock
     protected IndexLookup indexLookup;
+    @Mock
+    private ESSearchTypeHandler<SearchType> dummyHandler;
 
     private ElasticsearchBackend backend;
     private SearchJob searchJob;
     private Query query;
     private ESGeneratedQueryContext queryContext;
 
-    static abstract class DummyHandler implements ESSearchTypeHandler<SearchType> {
-    }
-
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         final FieldTypesLookup fieldTypesLookup = mock(FieldTypesLookup.class);
         this.backend = new ElasticsearchBackend(
                 ImmutableMap.of(
-                        "dummy", () -> mock(DummyHandler.class)
+                        "dummy", () -> dummyHandler
                 ),
                 client,
                 indexLookup,
@@ -129,8 +125,7 @@ public class ElasticsearchBackendErrorHandlingTest {
 
         final Set<SearchError> errors = queryResult.errors();
 
-        assertThat(errors).isNotNull();
-        assertThat(errors).hasSize(1);
+        assertThat(errors).isNotNull().hasSize(1);
         assertThat(errors.stream().map(SearchError::description).collect(Collectors.toList()))
                 .containsExactly("Unable to perform search query: " +
                         "\n\nElasticsearch exception [type=query_shard_exception, reason=Failed to parse query [[]].");
@@ -147,8 +142,7 @@ public class ElasticsearchBackendErrorHandlingTest {
 
         final Set<SearchError> errors = queryResult.errors();
 
-        assertThat(errors).isNotNull();
-        assertThat(errors).hasSize(1);
+        assertThat(errors).isNotNull().hasSize(1);
         assertThat(errors.stream().map(SearchError::description).collect(Collectors.toList()))
                 .containsExactly("Unable to perform search query: " +
                         "\n\nElasticsearch exception [type=illegal_argument_exception, reason=Expected numeric type on field [facility], but got [keyword]].");
