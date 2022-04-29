@@ -185,6 +185,7 @@ public class ViewsBindings extends ViewsModule {
         registerJacksonSubtype(AutoIntervalDTO.class);
 
         bind(SearchJobService.class).to(InMemorySearchJobService.class).in(Scopes.SINGLETON);
+
         bind(MappedFieldTypesService.class).to(MappedFieldTypesServiceImpl.class).in(Scopes.SINGLETON);
         bind(FieldTypeValidation.class).to(FieldTypeValidationImpl.class).in(Scopes.SINGLETON);
 
