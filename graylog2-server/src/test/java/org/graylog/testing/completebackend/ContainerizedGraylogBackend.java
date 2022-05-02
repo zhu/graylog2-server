@@ -28,46 +28,21 @@ import org.slf4j.LoggerFactory;
 import org.testcontainers.containers.Network;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
-import oshi.hardware.CentralProcessor.PhysicalProcessor;
 import oshi.hardware.CentralProcessor.TickType;
-import oshi.hardware.ComputerSystem;
-import oshi.hardware.Display;
 import oshi.hardware.GlobalMemory;
-import oshi.hardware.GraphicsCard;
-import oshi.hardware.HWDiskStore;
-import oshi.hardware.HWPartition;
 import oshi.hardware.HardwareAbstractionLayer;
-import oshi.hardware.LogicalVolumeGroup;
-import oshi.hardware.NetworkIF;
 import oshi.hardware.PhysicalMemory;
-import oshi.hardware.PowerSource;
-import oshi.hardware.Sensors;
-import oshi.hardware.SoundCard;
-import oshi.hardware.UsbDevice;
 import oshi.hardware.VirtualMemory;
-import oshi.software.os.FileSystem;
-import oshi.software.os.InternetProtocolStats;
-import oshi.software.os.NetworkParams;
-import oshi.software.os.OSFileStore;
-import oshi.software.os.OSProcess;
-import oshi.software.os.OSService;
 import oshi.software.os.OSSession;
 import oshi.software.os.OperatingSystem;
-import oshi.software.os.OperatingSystem.ProcessFiltering;
-import oshi.software.os.OperatingSystem.ProcessSorting;
 import oshi.util.FormatUtil;
 import oshi.util.Util;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -81,8 +56,6 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
     private SearchServerInstance searchServer;
     private MongoDBInstance mongodb;
     private NodeInstance node;
-
-    static List<String> oshi = new ArrayList<>();
 
     private ContainerizedGraylogBackend() {
     }
@@ -184,88 +157,20 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
 
     @Override
     public String getSysInfo() {
-        StringBuffer sysInfo = new StringBuffer("");
-        sysInfo.append("Available processors (cores): ").append(Runtime.getRuntime().availableProcessors()).append("\n");
-        sysInfo.append("Free memory (bytes): ").append(Runtime.getRuntime().freeMemory()).append("\n");
-        /* This will return Long.MAX_VALUE if there is no preset limit */
-        long maxMemory = Runtime.getRuntime().maxMemory();
-        sysInfo.append("Maximum memory (bytes): ").append( (maxMemory == Long.MAX_VALUE ? "no limit" : maxMemory)).append("\n");
-        sysInfo.append("Total memory available to JVM (bytes): ").append(Runtime.getRuntime().totalMemory()).append("\n");
+        final SystemInfo si = new SystemInfo();
 
-        /* Get a list of all filesystem roots on this system */
-        File[] roots = File.listRoots();
+        final HardwareAbstractionLayer hal = si.getHardware();
+        final OperatingSystem os = si.getOperatingSystem();
 
-        /* For each filesystem root, print some info */
-        for (File root : roots) {
-            sysInfo.append("-------------------------------------------\n");
-            sysInfo.append("File system root: ").append(root.getAbsolutePath()).append("\n");
-            sysInfo.append("Total space (bytes): ").append(root.getTotalSpace()).append("\n");
-            sysInfo.append("Free space (bytes): ").append(root.getFreeSpace()).append("\n");
-            sysInfo.append("Usable space (bytes): ").append(root.getUsableSpace()).append("\n");
-        }
+        final List<String> oshi = printOperatingSystem(os);
+        oshi.addAll(printMemory(hal.getMemory()));
+        oshi.addAll(printCpu(hal.getProcessor()));
 
-        try {
-            sysInfo.append("-------------------------------------------\n");
-
-            Runtime runtime = Runtime.getRuntime();
-            BufferedReader br = new BufferedReader(new InputStreamReader(runtime.exec("cat /proc/loadavg").getInputStream(), "UTF-8"));
-
-            String avgLine = br.readLine();
-            sysInfo.append(avgLine).append("\n");
-            List<String> avgLineList = Arrays.asList(avgLine.split("\\s+"));
-            sysInfo.append(avgLineList).append("\n");
-            sysInfo.append("Average load 1 minute : ").append(avgLineList.get(0)).append("\n");
-            sysInfo.append("Average load 5 minutes : ").append(avgLineList.get(1)).append("\n");
-            sysInfo.append("Average load 15 minutes : ").append(avgLineList.get(2)).append("\n");
-        } catch (IOException iox) {
-            sysInfo.append("Could not generate System Load: " + iox.getMessage());
-        }
-
-        sysInfo.append("--OSHI Output -----------------------------------------\n");
-        sysInfo.append(oshi()).append("\n");
-        sysInfo.append("-------------------------------------------\n");
-
-        return sysInfo.toString();
+        return String.join("\n", oshi);
     }
 
-    public String oshi() {
-        SystemInfo si = new SystemInfo();
-
-        HardwareAbstractionLayer hal = si.getHardware();
-        OperatingSystem os = si.getOperatingSystem();
-
-        printOperatingSystem(os);
-
-//        printComputerSystem(hal.getComputerSystem());
-//        printProcessor(hal.getProcessor());
-        printMemory(hal.getMemory());
-        printCpu(hal.getProcessor());
-//        printProcesses(os, hal.getMemory());
-//        printServices(os);
-//        printSensors(hal.getSensors());
-//        printPowerSources(hal.getPowerSources());
-//        printDisks(hal.getDiskStores());
-//        printLVgroups(hal.getLogicalVolumeGroups());
-//        printFileSystem(os.getFileSystem());
-//        printNetworkInterfaces(hal.getNetworkIFs());
-//        printNetworkParameters(os.getNetworkParams());
-//        printInternetProtocolStats(os.getInternetProtocolStats());
-//        printDisplays(hal.getDisplays());
-//        printUsbDevices(hal.getUsbDevices(true));
-//        printSoundCards(hal.getSoundCards());
-//        printGraphicsCards(hal.getGraphicsCards());
-
-        StringBuilder output = new StringBuilder();
-        for (int i = 0; i < oshi.size(); i++) {
-            output.append(oshi.get(i));
-            if (oshi.get(i) != null && !oshi.get(i).endsWith("\n")) {
-                output.append('\n');
-            }
-        }
-        return output.toString();
-    }
-
-    private static void printOperatingSystem(final OperatingSystem os) {
+    private List<String> printOperatingSystem(final OperatingSystem os) {
+        List<String> oshi = new ArrayList<>();
         oshi.add(String.valueOf(os));
         oshi.add("Booted: " + Instant.ofEpochSecond(os.getSystemBootTime()));
         oshi.add("Uptime: " + FormatUtil.formatElapsedSecs(os.getSystemUptime()));
@@ -274,24 +179,11 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
         for (OSSession s : os.getSessions()) {
             oshi.add(" " + s.toString());
         }
+        return oshi;
     }
 
-    private static void printComputerSystem(final ComputerSystem computerSystem) {
-        oshi.add("System: " + computerSystem.toString());
-        oshi.add(" Firmware: " + computerSystem.getFirmware().toString());
-        oshi.add(" Baseboard: " + computerSystem.getBaseboard().toString());
-    }
-
-    private static void printProcessor(CentralProcessor processor) {
-        oshi.add(processor.toString());
-        oshi.add(" Cores:");
-        for (PhysicalProcessor p : processor.getPhysicalProcessors()) {
-            oshi.add("  " + (processor.getPhysicalPackageCount() > 1 ? p.getPhysicalPackageNumber() + "," : "")
-                    + p.getPhysicalProcessorNumber() + ": efficiency=" + p.getEfficiency() + ", id=" + p.getIdString());
-        }
-    }
-
-    private static void printMemory(GlobalMemory memory) {
+    private List<String> printMemory(GlobalMemory memory) {
+        List<String> oshi = new ArrayList<>();
         oshi.add("Physical Memory: \n " + memory.toString());
         VirtualMemory vm = memory.getVirtualMemory();
         oshi.add("Virtual Memory: \n " + vm.toString());
@@ -302,9 +194,11 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
                 oshi.add(" " + pm.toString());
             }
         }
+        return oshi;
     }
 
-    private static void printCpu(CentralProcessor processor) {
+    private List<String> printCpu(CentralProcessor processor) {
+        List<String> oshi = new ArrayList<>();
         oshi.add("Context Switches/Interrupts: " + processor.getContextSwitches() + " / " + processor.getInterrupts());
 
         long[] prevTicks = processor.getSystemCpuLoadTicks();
@@ -359,168 +253,7 @@ public class ContainerizedGraylogBackend implements GraylogBackend, AutoCloseabl
             }
             oshi.add(sb.toString());
         }
-    }
-
-    private static void printProcesses(OperatingSystem os, GlobalMemory memory) {
-        OSProcess myProc = os.getProcess(os.getProcessId());
-        // current process will never be null. Other code should check for null here
-        oshi.add(
-                "My PID: " + myProc.getProcessID() + " with affinity " + Long.toBinaryString(myProc.getAffinityMask()));
-        oshi.add("Processes: " + os.getProcessCount() + ", Threads: " + os.getThreadCount());
-        // Sort by highest CPU
-        List<OSProcess> procs = os.getProcesses(ProcessFiltering.ALL_PROCESSES, ProcessSorting.CPU_DESC, 5);
-        oshi.add("   PID  %CPU %MEM       VSZ       RSS Name");
-        for (int i = 0; i < procs.size() && i < 5; i++) {
-            OSProcess p = procs.get(i);
-            oshi.add(f(" %5d %5.1f %4.1f %9s %9s %s", p.getProcessID(),
-                    100d * (p.getKernelTime() + p.getUserTime()) / p.getUpTime(),
-                    100d * p.getResidentSetSize() / memory.getTotal(), FormatUtil.formatBytes(p.getVirtualSize()),
-                    FormatUtil.formatBytes(p.getResidentSetSize()), p.getName()));
-        }
-        OSProcess p = os.getProcess(os.getProcessId());
-        oshi.add("Current process arguments: ");
-        for (String s : p.getArguments()) {
-            oshi.add("  " + s);
-        }
-        oshi.add("Current process environment: ");
-        for (Map.Entry<String, String> e : p.getEnvironmentVariables().entrySet()) {
-            oshi.add("  " + e.getKey() + "=" + e.getValue());
-        }
-    }
-
-    private static void printServices(OperatingSystem os) {
-        oshi.add("Services: ");
-        oshi.add("   PID   State   Name");
-        // DO 5 each of running and stopped
-        int i = 0;
-        for (OSService s : os.getServices()) {
-            if (s.getState().equals(OSService.State.RUNNING) && i++ < 5) {
-                oshi.add(f(" %5d  %7s  %s", s.getProcessID(), s.getState(), s.getName()));
-            }
-        }
-        i = 0;
-        for (OSService s : os.getServices()) {
-            if (s.getState().equals(OSService.State.STOPPED) && i++ < 5) {
-                oshi.add(f(" %5d  %7s  %s", s.getProcessID(), s.getState(), s.getName()));
-            }
-        }
-    }
-
-    private static void printSensors(Sensors sensors) {
-        oshi.add("Sensors: " + sensors.toString());
-    }
-
-    private static void printPowerSources(List<PowerSource> list) {
-        StringBuilder sb = new StringBuilder("Power Sources: ");
-        if (list.isEmpty()) {
-            sb.append("Unknown");
-        }
-        for (PowerSource powerSource : list) {
-            sb.append("\n ").append(powerSource.toString());
-        }
-        oshi.add(sb.toString());
-    }
-
-    private static void printDisks(List<HWDiskStore> list) {
-        oshi.add("Disks:");
-        for (HWDiskStore disk : list) {
-            oshi.add(" " + disk.toString());
-
-            List<HWPartition> partitions = disk.getPartitions();
-            for (HWPartition part : partitions) {
-                oshi.add(" |-- " + part.toString());
-            }
-        }
-
-    }
-
-    private static void printLVgroups(List<LogicalVolumeGroup> list) {
-        if (!list.isEmpty()) {
-            oshi.add("Logical Volume Groups:");
-            for (LogicalVolumeGroup lvg : list) {
-                oshi.add(" " + lvg.toString());
-            }
-        }
-    }
-
-    private static void printFileSystem(FileSystem fileSystem) {
-        oshi.add("File System:");
-
-        oshi.add(f(" File Descriptors: %d/%d", fileSystem.getOpenFileDescriptors(),
-                fileSystem.getMaxFileDescriptors()));
-
-        for (OSFileStore fs : fileSystem.getFileStores()) {
-            long usable = fs.getUsableSpace();
-            long total = fs.getTotalSpace();
-            oshi.add(f(
-                    " %s (%s) [%s] %s of %s free (%.1f%%), %s of %s files free (%.1f%%) is %s "
-                            + (fs.getLogicalVolume() != null && fs.getLogicalVolume().length() > 0 ? "[%s]" : "%s")
-                            + " and is mounted at %s",
-                    fs.getName(), fs.getDescription().isEmpty() ? "file system" : fs.getDescription(), fs.getType(),
-                    FormatUtil.formatBytes(usable), FormatUtil.formatBytes(fs.getTotalSpace()), 100d * usable / total,
-                    FormatUtil.formatValue(fs.getFreeInodes(), ""), FormatUtil.formatValue(fs.getTotalInodes(), ""),
-                    100d * fs.getFreeInodes() / fs.getTotalInodes(), fs.getVolume(), fs.getLogicalVolume(),
-                    fs.getMount()));
-        }
-    }
-
-    private static void printNetworkInterfaces(List<NetworkIF> list) {
-        StringBuilder sb = new StringBuilder("Network Interfaces:");
-        if (list.isEmpty()) {
-            sb.append(" Unknown");
-        } else {
-            for (NetworkIF net : list) {
-                sb.append("\n ").append(net.toString());
-            }
-        }
-        oshi.add(sb.toString());
-    }
-
-    private static void printNetworkParameters(NetworkParams networkParams) {
-        oshi.add("Network parameters:\n " + networkParams.toString());
-    }
-
-    private static void printInternetProtocolStats(InternetProtocolStats ip) {
-        oshi.add("Internet Protocol statistics:");
-        oshi.add(" TCPv4: " + ip.getTCPv4Stats());
-        oshi.add(" TCPv6: " + ip.getTCPv6Stats());
-        oshi.add(" UDPv4: " + ip.getUDPv4Stats());
-        oshi.add(" UDPv6: " + ip.getUDPv6Stats());
-    }
-
-    private static void printDisplays(List<Display> list) {
-        oshi.add("Displays:");
-        int i = 0;
-        for (Display display : list) {
-            oshi.add(" Display " + i + ":");
-            oshi.add(String.valueOf(display));
-            i++;
-        }
-    }
-
-    private static void printUsbDevices(List<UsbDevice> list) {
-        oshi.add("USB Devices:");
-        for (UsbDevice usbDevice : list) {
-            oshi.add(String.valueOf(usbDevice));
-        }
-    }
-
-    private static void printSoundCards(List<SoundCard> list) {
-        oshi.add("Sound Cards:");
-        for (SoundCard card : list) {
-            oshi.add(" " + String.valueOf(card));
-        }
-    }
-
-    private static void printGraphicsCards(List<GraphicsCard> list) {
-        oshi.add("Graphics Cards:");
-        if (list.isEmpty()) {
-            oshi.add(" None detected.");
-        } else {
-            for (GraphicsCard card : list) {
-                oshi.add(" " + String.valueOf(card));
-            }
-        }
+        return oshi;
     }
 
     @Override

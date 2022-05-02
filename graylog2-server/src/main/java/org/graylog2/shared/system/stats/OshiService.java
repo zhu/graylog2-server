@@ -30,7 +30,8 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static oshi.util.GlobalConfig.OSHI_PSEUDO_FILESYSTEM_TYPES;
+import static oshi.software.common.AbstractFileSystem.OSHI_PSEUDO_FILESYSTEM_TYPES;
+
 
 @Singleton
 public class OshiService {
