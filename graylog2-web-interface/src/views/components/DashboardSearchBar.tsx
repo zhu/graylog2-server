@@ -61,7 +61,6 @@ const Container = styled.div`
 const TopRow = styled.div(({ theme }) => css`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
 
   @media (max-width: ${theme.breakpoints.max.sm}) {
     flex-direction: column;
