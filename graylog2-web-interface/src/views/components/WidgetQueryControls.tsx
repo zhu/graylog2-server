@@ -74,11 +74,6 @@ const SecondRow = styled.div`
   }
 `;
 
-const WidgetTopRow = styled(Row)`
-  margin-top: 10px;
-  margin-bottom: 10px;
-`;
-
 type Props = {
   availableStreams: Array<{ key: string, value: string }>,
   globalOverride: GlobalOverride | undefined | null,
@@ -185,7 +180,7 @@ const WidgetQueryControls = ({ availableStreams, globalOverride }: Props) => {
             <Container>
               <PropagateDisableSubmissionState formKey="widget-query-controls" disableSubmission={disableSearchSubmit} />
               <ValidateOnParameterChange parameters={parameters} />
-              <WidgetTopRow>
+              <Row>
                 <Col md={6}>
                   {!hasTimeRangeOverride && (
                     <TimeRangeInput disabled={hasTimeRangeOverride}
@@ -209,7 +204,7 @@ const WidgetQueryControls = ({ availableStreams, globalOverride }: Props) => {
                     )}
                   </Field>
                 </Col>
-              </WidgetTopRow>
+              </Row>
 
               <SecondRow>
                 <SearchButton disabled={disableSearchSubmit}
