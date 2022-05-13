@@ -80,6 +80,8 @@ public interface SearchType extends ContentPackable<SearchTypeEntity>, Exportabl
 
     SearchType applyExecutionContext(SearchTypeExecutionState executionState);
 
+    SearchType withQuery(BackendQuery query);
+
     default Set<String> effectiveStreams() {
         return streams();
     }
