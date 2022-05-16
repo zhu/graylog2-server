@@ -19,8 +19,6 @@ package org.graylog.plugins.views.search.searchtypes.events;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.auto.value.AutoValue;
 import com.google.common.collect.ImmutableSet;
@@ -72,6 +70,11 @@ public abstract class EventList implements SearchType {
     @Override
     public SearchType applyExecutionContext(SearchTypeExecutionState state) {
         return this;
+    }
+
+    @Override
+    public SearchType withQuery(BackendQuery query) {
+        return toBuilder().query(query).build();
     }
 
     @Override
