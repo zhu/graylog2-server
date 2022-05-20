@@ -15,7 +15,7 @@
  * <http://www.mongodb.com/licensing/server-side-public-license>.
  */
 /* eslint-disable global-require */
-module.exports = (api, opts, path) => {
+module.exports = (api) => {
   const isEnvTest = api.env('test');
 
   return isEnvTest
