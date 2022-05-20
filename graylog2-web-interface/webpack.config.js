@@ -33,10 +33,8 @@ const VENDOR_MANIFEST_PATH = path.resolve(MANIFESTS_PATH, 'vendor-manifest.json'
 const TARGET = process.env.npm_lifecycle_event || 'build';
 process.env.BABEL_ENV = TARGET;
 
-const BABELRC = path.resolve(ROOT_PATH, 'babel.config.js');
 const BABELOPTIONS = {
   cacheDirectory: 'target/web/cache',
-  extends: BABELRC,
 };
 
 const BABELLOADER = { loader: 'babel-loader', options: BABELOPTIONS };
