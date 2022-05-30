@@ -116,8 +116,7 @@ public class ElasticsearchBackend implements QueryBackend<ESGeneratedQueryContex
 
         usedSearchFiltersToQueryStringsMapper.map(query.filters())
                 .forEach(searchFilterQueryString -> {
-                    final String decorated = this.queryStringDecorators.decorate(searchFilterQueryString, job, query);
-                    final QueryBuilder normalized = normalizeQueryString(decorated);
+                    final QueryBuilder normalized = normalizeQueryString(searchFilterQueryString);
                     boolQuery.filter(normalized);
                 });
 
