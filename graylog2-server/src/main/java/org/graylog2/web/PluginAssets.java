@@ -86,7 +86,7 @@ public class PluginAssets {
             jsFiles.addAll(manifest.files().jsFiles());
             cssFiles.addAll(manifest.files().cssFiles());
         } else {
-            throw new IllegalStateException("Unable to find web interface assets. Maybe the web interface was not built into server?");
+            //throw new IllegalStateException("Unable to find web interface assets. Maybe the web interface was not built into server?");
         }
     }
 
